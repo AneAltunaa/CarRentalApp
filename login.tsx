@@ -29,8 +29,8 @@ export default function LoginScreen() {
     }**/
    /*If login correct navigate to mainPage */
    
-    navigation.navigate('mainPage')
-    
+    navigation.navigate('MainTabs')
+
 }
 
   return(
