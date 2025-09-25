@@ -23,6 +23,24 @@ export default function RegisterScreen() {
               <View style={styles.labels}>
               <Text style={{marginRight: 10, marginTop: 10}}>Password:</Text><TextInput placeholder='Enter your password' style={styles.textStyle} value={password} onChangeText={setPassword} secureTextEntry/>
               </View>
+
+              <View style={styles.labels}>
+              <Text style={{marginRight: 10, marginTop: 10}}>Name:</Text><TextInput placeholder='Enter your name' style={styles.textStyle}/>
+              </View>
+
+              <View style={styles.labels}>
+              <Text style={{marginRight: 10, marginTop: 10}}>Surname:</Text><TextInput placeholder='Enter your surname' style={styles.textStyle}  secureTextEntry/>
+              </View>
+
+              <View style={styles.labels}>
+              <Text style={{marginRight: 10, marginTop: 10}}>Date of Birth:</Text><TextInput placeholder='Enter your date of birth (dd/mm/yyyy)' style={styles.textStyle}  secureTextEntry/>
+              </View>
+
+              <View style={styles.labels}>
+              <Text style={{marginRight: 10, marginTop: 10}}>CPR:</Text><TextInput placeholder='Enter your CPR number' style={styles.textStyle}  secureTextEntry/>
+              </View>
+
+
           </View>
 
           <Text></Text>

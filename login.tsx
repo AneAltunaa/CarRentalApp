@@ -35,6 +35,7 @@ export default function LoginScreen() {
 
   return(
     <View style={styles.container}>
+
         <Text style={{fontFamily: 'Courier', fontSize:24}}>Login page</Text>
       <View style={styles.backgroundInput}>
           <View style={styles.labels}>

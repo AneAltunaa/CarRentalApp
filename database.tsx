@@ -19,8 +19,7 @@ export function Database({ children }: DatabaseProps) {
             surname TEXT NOT NULL,
             dateOfBirth TEXT NOT NULL,
             cpr TEXT NOT NULL UNIQUE,
-            isWorker INTEGER NOT NULL DEFAULT 0,
-            cardDetails TEXT
+            isWorker INTEGER NOT NULL DEFAULT 0
           );
 
           CREATE TABLE IF NOT EXISTS CarList (

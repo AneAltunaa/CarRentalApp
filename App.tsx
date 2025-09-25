@@ -39,22 +39,21 @@ export default function App() {
         <Stack.Screen
         name='login'
         component={login}
-        options={{headerShown:false}
+        options={{headerShown:true}
         }
         />
         <Stack.Screen
         name='register'
         component={register}
-        options={{headerShown:false}
+        options={{headerShown:true}
         }
         />
         <Stack.Screen
         name='forgotPass'
         component={forgotPass}
-        options={{headerShown:false}
+        options={{headerShown:true}
         }
         />
-
 
         {/* The main screen of our stack is the entire TabNavigator */}
         <Stack.Screen

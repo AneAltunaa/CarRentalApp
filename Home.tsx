@@ -15,7 +15,6 @@ const registerButton = async () => {
     navigation.navigate('register')
     }
 
-
   return(
     <View style={styles.container}>
     <Text style={styles.welcomeText}>Welcome!</Text>
