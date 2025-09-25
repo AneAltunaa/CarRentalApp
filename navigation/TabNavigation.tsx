@@ -7,6 +7,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CarListScreen from '../screens/CarListScreen';
 import LocationScreen from '../screens/LocationScreen';
 import Cart from '../screens/CartScreen';
+import Bookings from '../screens/Bookings';
 
 const Tab = createBottomTabNavigator();
 
@@ -20,8 +21,9 @@ const TabNavigator = () => {
       }}
     >
       <Tab.Screen name="Home" component={CarListScreen} />
-      <Tab.Screen name="Cart" component={Cart} />
       <Tab.Screen name="Location" component={LocationScreen} />
+      <Tab.Screen name="Cart" component={Cart} />
+      <Tab.Screen name="Bookings" component={Bookings} />
     </Tab.Navigator>
   );
 };
