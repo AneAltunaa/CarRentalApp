@@ -7,6 +7,7 @@ import mainPage from './mainPage';
 import forgotPass from './forgotPass';
 import {createStaticNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { Database } from "./database";
 
 const RootStack = createNativeStackNavigator({
   screens: {
