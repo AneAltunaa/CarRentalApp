@@ -14,7 +14,11 @@ export function Database({ children }: DatabaseProps) {
           CREATE TABLE IF NOT EXISTS User (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT NOT NULL UNIQUE,
-            password TEXT,
+            password TEXT NOT NULL,
+            name TEXT NOT NULL,
+            surname TEXT NOT NULL,
+            dateOfBirth TEXT NOT NULL,
+            cpr TEXT NOT NULL UNIQUE,
             isWorker INTEGER NOT NULL DEFAULT 0,
             cardDetails TEXT
           );
