@@ -1,40 +1,42 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, Button } from 'react-native';
- // Import the 'Car' type from our data file
- import { Car } from '../data/cars';
+import { useNavigation } from '@react-navigation/native'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+// Import the 'Car' type from our data file
+import { Car } from '../data/cars';
 
- // Define the type for the props this components will receive
- // It expects a single prop named 'car' of type 'Car'
- interface CarCardProps {
+
+// Define the type for the props this components will receive
+// It expects a single prop named 'car' of type 'Car'
+interface CarCardProps {
     car: Car;
- }
+    onRent: () => void;
+}
+  
 
- // This is the CarCard component
- // It uses destrucuring to get the 'car' object directly from prps
- const CarCard: React.FC<CarCardProps> = ({ car }) => {
-    return (
-        <View style={styles.cardContainer}>
-            {/* Car Title */}
-            <Text style={styles.title}>{car.name}</Text>
+// This is the CarCard component
+// It uses destrucuring to get the 'car' object directly from prps
+const CarCard: React.FC<CarCardProps> = ({ car,onRent}) => {
+  return (
+    <View style={styles.cardContainer}>
+      <Text style={styles.title}>{car.name}</Text>
+      <Image source={{uri: car.image}} style={styles.image} />
+      {/* <Text style={styles.infoLink}>More Information</Text> */}
+      <View style={styles.bottomRow}>
+        <Text style={styles.price}>{car.price} € / day</Text>
+      <Button title="Rent" onPress={onRent} />
+      </View>
+    </View>
+  );
+};
 
-            {/* Car Image */}
-            <Image source={{ uri: car.image }} style={styles.image} />
 
-            {/* More information link */}
-            <Text style={styles.infoLink}>More Information</Text>
-
-            {/* Bottom row containing price and button */}
-            <View style={styles.bottomRow}>
-                <Text style={styles.price}>{car.price} € / day</Text>
-                <Button title="Rent" onPress={() => alert('Rent button pressed!')} />
-            </View>
-        </View>
-    );
- };
 
 // define the styles for te component
 const styles = StyleSheet.create({
     cardContainer: {
+        borderColor: 'blue',
+        borderWidth: 1.5,
         width: '90%',
         backgroundColor: 'white',
         borderRadius: 20,

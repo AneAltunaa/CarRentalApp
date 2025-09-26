@@ -29,7 +29,7 @@ export default function LoginScreen() {
     }**/
    /*If login correct navigate to mainPage */
    
-    navigation.navigate('MainTabs')
+    navigation.navigate('CarTabs')
 
 }
 

@@ -4,17 +4,57 @@ import login from './login';
 import register from './register';
 import Home from './Home';
 import CarListScreen from './screens/CarListScreen';
+import LocationScreen from './screens/LocationScreen';
+import Cart from './screens/CartScreen';
+import Bookings from './screens/Bookings';
 import React from 'react';
 import forgotPass from './forgotPass';
 import {createStaticNavigation, NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import TabNavigator from './navigation/TabNavigation';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+import RentCar from './screens/RentCar';
 
 import { Database } from "./database";
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+const CarStack = createNativeStackNavigator();
+
+// Εδώ φτιάχνουμε τον stack navigator για το Cars tab
+const CarStackNavigator = ({navigation: parentNavigation }) => {
+  return (
+    <CarStack.Navigator>
+      <CarStack.Screen
+        name="CarList"
+        component={CarListScreen}
+        options={({ navigation }) => ({
+          title: 'Cars',
+          headerLeft: () => (
+            <Button title="Back" onPress={() => parentNavigation.navigate('login')} />
+          ),
+        })}
+      />
+      <CarStack.Screen
+        name="RentCar"
+        component={RentCar}
+        options={{ title: 'Rent a Car', headerLeft: () => null}} // Disable back button
+      />
+    </CarStack.Navigator>
+  );
+};
+const CarTabs = () => (
+      <Tab.Navigator screenOptions={{ headerShown: false, tabBarActiveTintColor: '#6A1B9A' }}>
+        <Tab.Screen name="CarsList" component={CarStackNavigator} options={{ title: 'Cars' }} />
+        <Tab.Screen name="Location" component={LocationScreen} />
+        <Tab.Screen name="Cart" component={Cart} />
+        <Tab.Screen name="Bookings" component={Bookings} />
+      </Tab.Navigator>
+    );
+
 
 export default function App() {
+  
   return (
 
     <NavigationContainer>
@@ -54,28 +94,13 @@ export default function App() {
         options={{headerShown:true}
         }
         />
-
-        {/* The main screen of our stack is the entire TabNavigator */}
+        
+        {/* Main Tabs */}
         <Stack.Screen
-          name="MainTabs"
-          component={TabNavigator}
-          // Options for this specific screen's header
-          options={{
-            headerTitle: () => (
-              // Display the app name with custom styling
-              <Text style={{ fontSize: 24, fontWeight: 'bold' }}>GoCar</Text>
-            ),
-            headerRight: () => (
-              // Display a button on the right side
-              <Button
-                onPress={() => alert('Profile button pressed!')}
-                title="Profile" // Using text as a placeholder for the icon
-              />
-            ),
-          }}
+          name="CarTabs"
+          component={CarTabs}
+          options={{ headerShown: false}} // header hidden γιατί κάθε tab έχει δικό του header
         />
-        {/* We can add other screens like a real Profile screen here later */}
-        {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
       </Stack.Navigator>
     </NavigationContainer>
    

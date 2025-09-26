@@ -37,11 +37,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
-        justifyContent: 'space-round',
+        justifyContent: 'space-around',
       },
   buttons:{
       flexDirection: 'row',
-      justifyContent: 'space-round',
+      justifyContent: 'space-around',
       position: 'absolute',
       width:'100%',
       bottom:20,},
