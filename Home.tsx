@@ -17,7 +17,7 @@ const registerButton = async () => {
 
   return(
     <View style={styles.container}>
-    <Text style={styles.welcomeText}>Welcome!opo</Text>
+    <Text style={styles.welcomeText}>Welcome!</Text>
     <View style={styles.buttonStyle}>
         <View style={styles.button}>
         <Button title='Log in' style={styles.buttonStyle} onPress={loginButton}/>
