@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Calendar, DateObject } from 'react-native-calendars';
 
-const RentCalendar = () => {
+interface RentCalendarProps {
+  onSelectDates: (startDate: string, endDate: string) => void;
+}
+
+const RentCalendar = ({onSelectDates}:RentCalendarProps) => {
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
   const [markedDates, setMarkedDates] = useState<any>({});
@@ -14,11 +18,13 @@ const RentCalendar = () => {
       setStartDate(date);
       setEndDate(null);
       setMarkedDates({ [date]: { startingDay: true, endingDay: true, color: 'blue', textColor: 'white' } });
+      onSelectDates(date, date);
     } else if (startDate && !endDate) {
       if (date < startDate) { 
         setStartDate(date);
         setEndDate(null);
         setMarkedDates({ [date]: { startingDay: true, endingDay: true, color: 'blue', textColor: 'white' } });  
+        onSelectDates(date, date);
       } else {
         setEndDate(date);
       }
@@ -37,6 +43,7 @@ const RentCalendar = () => {
         };
       }
       setMarkedDates(range);
+      onSelectDates(startDate, date);
     }
   };
 

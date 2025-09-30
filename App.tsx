@@ -56,6 +56,8 @@ const CarTabs = () => (
 export default function App() {
   
   return (
+  
+    <Database>
 
     <NavigationContainer>
       
@@ -103,6 +105,8 @@ export default function App() {
         />
       </Stack.Navigator>
     </NavigationContainer>
+
+    </Database>
    
   );
 }

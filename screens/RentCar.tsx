@@ -3,8 +3,11 @@ import { useState } from 'react';
 import CarDetails from '../components/CarDetails';
 import { Calendar , CalendarProps } from 'react-native-calendars';
 import RentCalendar from '../components/RentCalendar';
-
+import * as SQLite from 'expo-sqlite';
+import { useSQLiteContext } from "expo-sqlite"; 
+import { Alert } from 'react-native';
 import { View, StyleSheet, ScrollView, Text, Image, TouchableHighlight, TouchableOpacity } from 'react-native';
+
 
 type RentCarRouteProp = RouteProp<RootStackParamList, 'RentCar'>;
 
@@ -13,6 +16,23 @@ const RentCar = () => {
   const { car } = route.params;
 
   const [showDetails, setShowDetails] = useState(false);
+  const [startDate, setStartDate] = useState<string | null>(null);
+  const [endDate, setEndDate] = useState<string | null>(null);
+  const db = useSQLiteContext();
+  const handleConfirmRental = async () => {
+    if (!startDate || !endDate) {
+        alert('Please select both start and end dates for the rental.');
+        return;
+    }
+    try {
+        await db.runAsync( `INSERT INTO RentalHistory (startDate, endDate, UserId, CarId) VALUES (?, ?, ?, ?)`, [startDate, endDate, 1, car.id]);
+        Alert.alert('Success', 'Rental confirmed successfully!');
+    } catch(err) {
+        console.log(err);
+        Alert.alert('Error', 'There was an error confirming your rental. Please try again.');
+    }
+  };
+    
   return (
     <ScrollView>
         <View style={styles.cardContainer}>
@@ -31,9 +51,13 @@ const RentCar = () => {
                 
             </View>
             {showDetails && <CarDetails car={car} />}
-            <RentCalendar />
+            <RentCalendar
+            onSelectDates={(start, end) => {
+            setStartDate(start);
+            setEndDate(end);
+          }} />
             <TouchableHighlight style={styles.rentButtoon }
-                onPress={() =>{}}>
+                onPress={handleConfirmRental}>
                 <Text style={styles.rental}>
                     Confirm Rental
                 </Text>
