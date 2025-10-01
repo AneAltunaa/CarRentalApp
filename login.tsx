@@ -19,39 +19,50 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
 
   const loginFunction = async () =>{
-  /**try {
-      const result = await login(username, password);
-      if (result.success) {
-        Alert.alert('Success', result.message);
+  try {
+  //Fetch from backend
+      const response = await fetch('http://10.0.2.2:5000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        navigation.navigate('CarTabs');
+      } else {
+        Alert.alert('Error', 'Incorrect username or password');
       }
     } catch (err: any) {
       Alert.alert('Error', err.message);
-    }**/
-   /*If login correct navigate to mainPage */
-   
-    navigation.navigate('CarTabs')
-
+    }
 }
 
-  return(
-    <View style={styles.container}>
-
-        <Text style={{fontFamily: 'Courier', fontSize:24}}>Login page</Text>
-      <View style={styles.backgroundInput}>
-          <View style={styles.labels}>
-          <Text style={{marginRight: 10, marginTop: 10}}>Username:</Text><TextInput placeholder='Enter your Username' style={styles.textStyle}/>
-          </View>
-
-          <View style={styles.labels}>
-          <Text style={{marginRight: 10, marginTop: 10}}>Password:</Text><TextInput placeholder='Enter you Password' style={styles.textStyle} secureTextEntry/>
-          </View>
-      </View>
-
-      <Text></Text>
-
-
-      <Button title='Log in'  onPress={() =>loginFunction()}/>
-
+ return (
+    <View style={{ padding: 20 }}>
+      <TextInput
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
+        style={{
+          borderWidth: 1,
+          marginBottom: 10,
+          padding: 8,
+        }}
+      />
+      <TextInput
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        style={{
+          borderWidth: 1,
+          marginBottom: 10,
+          padding: 8,
+        }}
+      />
+      <Button title="Log in" onPress={loginFunction} />
       <Button title='Forgot the password' onPress={() =>{navigation.navigate('forgotPass') }} />
     </View>
   );

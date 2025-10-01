@@ -15,8 +15,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import RentCar from './screens/RentCar';
 
-import { Database } from "./database";
-
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const CarStack = createNativeStackNavigator();
@@ -56,9 +54,6 @@ const CarTabs = () => (
 export default function App() {
   
   return (
-  
-    <Database>
-
     <NavigationContainer>
       
       <Stack.Navigator
@@ -105,8 +100,6 @@ export default function App() {
         />
       </Stack.Navigator>
     </NavigationContainer>
-
-    </Database>
    
   );
 }

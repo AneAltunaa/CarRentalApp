@@ -3,8 +3,6 @@ import { useState } from 'react';
 import CarDetails from '../components/CarDetails';
 import { Calendar , CalendarProps } from 'react-native-calendars';
 import RentCalendar from '../components/RentCalendar';
-import * as SQLite from 'expo-sqlite';
-import { useSQLiteContext } from "expo-sqlite"; 
 import { Alert } from 'react-native';
 import { View, StyleSheet, ScrollView, Text, Image, TouchableHighlight, TouchableOpacity } from 'react-native';
 
@@ -18,20 +16,36 @@ const RentCar = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
-  const db = useSQLiteContext();
   const handleConfirmRental = async () => {
-    if (!startDate || !endDate) {
-        alert('Please select both start and end dates for the rental.');
-        return;
+  if (!startDate || !endDate) {
+    alert("Please select both start and end dates for the rental.");
+    return;
+  }
+
+  try {
+    const response = await fetch("http://10.0.2.2:5000/rent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        startDate,
+        endDate,
+        userId: 1,   //for now, change to current logged user TODO
+        carId: car.id,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      Alert.alert("Success", "Rental confirmed successfully!");
+    } else {
+      Alert.alert("Error", result.message);
     }
-    try {
-        await db.runAsync( `INSERT INTO RentalHistory (startDate, endDate, UserId, CarId) VALUES (?, ?, ?, ?)`, [startDate, endDate, 1, car.id]);
-        Alert.alert('Success', 'Rental confirmed successfully!');
-    } catch(err) {
-        console.log(err);
-        Alert.alert('Error', 'There was an error confirming your rental. Please try again.');
-    }
-  };
+  } catch (err) {
+    console.error(err);
+    Alert.alert("Error", "Could not connect to the server.");
+  }
+};
     
   return (
     <ScrollView>
@@ -80,12 +94,10 @@ const styles = StyleSheet.create({
         padding: 20,
         marginVertical: 10,
         marginHorizontal: 15,
-        // Shadow for iOS
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
-        // Shadow for Android
         elevation: 5,
     },
     title: {
