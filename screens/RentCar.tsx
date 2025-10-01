@@ -6,6 +6,9 @@ import RentCalendar from '../components/RentCalendar';
 import { Alert } from 'react-native';
 import { View, StyleSheet, ScrollView, Text, Image, TouchableHighlight, TouchableOpacity } from 'react-native';
 
+// for map part
+import MapComponent from '../components/MapComponent';
+
 
 type RentCarRouteProp = RouteProp<RootStackParamList, 'RentCar'>;
 
@@ -65,6 +68,15 @@ const RentCar = () => {
                 
             </View>
             {showDetails && <CarDetails car={car} />}
+
+            {/* Add this empty View for spacing */}
+            <View style={{ height: 40 }} /> 
+
+            {/* Map section */}
+            <View style={styles.mapContainer}>
+              <MapComponent />
+            </View>
+
             <RentCalendar
             onSelectDates={(start, end) => {
             setStartDate(start);
@@ -131,6 +143,21 @@ const styles = StyleSheet.create({
         padding: 10,
         fontSize: 18,
         alignSelf: 'center',
+    },
+
+    // map section
+    sectionTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginTop: 20,
+      marginBottom: 20,
+    },
+    mapContainer: {
+      height: 200,
+      width: '100%',
+      borderRadius: 15,
+      overflow: 'hidden',
+      marginBottom: 20,
     }
 });
 export default RentCar;
