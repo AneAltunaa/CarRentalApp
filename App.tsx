@@ -8,7 +8,7 @@ import LocationScreen from './screens/LocationScreen';
 import Cart from './screens/CartScreen';
 import Bookings from './screens/Bookings';
 import React from 'react';
-import forgotPass from './forgotPass';
+import ForgotPass from './forgotPass';
 import {createStaticNavigation, NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -86,8 +86,8 @@ export default function App() {
         }
         />
         <Stack.Screen
-        name='forgotPass'
-        component={forgotPass}
+        name='ForgotPass'
+        component={ForgotPass}
         options={{headerShown:true}
         }
         />

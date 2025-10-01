@@ -62,8 +62,8 @@ export default function LoginScreen() {
           padding: 8,
         }}
       />
-      <Button title="Log in" onPress={loginFunction} />
-      <Button title='Forgot the password' onPress={() =>{navigation.navigate('forgotPass') }} />
+      <Button title="Log in" onPress={() => loginFunction()} />
+      <Button title='Forgot the password' onPress={() =>{navigation.navigate('ForgotPass') }} />
     </View>
   );
 }

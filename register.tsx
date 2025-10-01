@@ -1,16 +1,38 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, View, Button } from 'react-native';
+import { StyleSheet, Text, Alert, TextInput, View, Button } from 'react-native';
 import React, { useState } from 'react';
-
-function register(username: string, password: string){ //what else??
-  //add this to the db
-  console.log(`Logging in with username: ${username} and password: ${password}`);
-}
+import {useNavigation} from '@react-navigation/native';
 
 export default function RegisterScreen() {
 
+  const navigation = useNavigation();
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [surname, setSurname] = useState('');
+  const [dateOfBirth, setDateBirth] = useState('');
+  const [cpr, setCpr] = useState('');
+
+  const register = async () =>{
+    try {
+    //Fetch from backend
+        const response = await fetch('http://10.0.2.2:5000/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password, name, surname, dateOfBirth, cpr }),
+        }); 
+        const data = await response.json();
+        if (data.success) {
+          Alert.alert('Success', 'User registered successfully');
+          navigation.navigate('login');
+        } else {
+          Alert.alert('Error', 'Registration failed');
+        }
+      } catch (err: any) {
+        Alert.alert('Error', err.message);
+      }
+  }
 
   return(
     <View style={styles.container}>
@@ -25,19 +47,19 @@ export default function RegisterScreen() {
               </View>
 
               <View style={styles.labels}>
-              <Text style={{marginRight: 10, marginTop: 10}}>Name:</Text><TextInput placeholder='Enter your name' style={styles.textStyle}/>
+              <Text style={{marginRight: 10, marginTop: 10}}>Name:</Text><TextInput placeholder='Enter your name' style={styles.textStyle} value={name} onChangeText={setName}/>
               </View>
 
               <View style={styles.labels}>
-              <Text style={{marginRight: 10, marginTop: 10}}>Surname:</Text><TextInput placeholder='Enter your surname' style={styles.textStyle}  secureTextEntry/>
+              <Text style={{marginRight: 10, marginTop: 10}}>Surname:</Text><TextInput placeholder='Enter your surname' style={styles.textStyle}  value={surname} onChangeText={setSurname}/>
               </View>
 
               <View style={styles.labels}>
-              <Text style={{marginRight: 10, marginTop: 10}}>Date of Birth:</Text><TextInput placeholder='Enter your date of birth (dd/mm/yyyy)' style={styles.textStyle}  secureTextEntry/>
+              <Text style={{marginRight: 10, marginTop: 10}}>Date of Birth:</Text><TextInput placeholder='Enter your date of birth (dd/mm/yyyy)' style={styles.textStyle}  value={dateOfBirth} onChangeText={setDateBirth}/>
               </View>
 
               <View style={styles.labels}>
-              <Text style={{marginRight: 10, marginTop: 10}}>CPR:</Text><TextInput placeholder='Enter your CPR number' style={styles.textStyle}  secureTextEntry/>
+              <Text style={{marginRight: 10, marginTop: 10}}>CPR:</Text><TextInput placeholder='Enter your CPR number' style={styles.textStyle}  value={cpr} onChangeText={setCpr}/>
               </View>
 
 
@@ -45,7 +67,7 @@ export default function RegisterScreen() {
 
           <Text></Text>
 
-          <Button title='Register' onPress={() =>register(username, password)}/>
+          <Button title='Register' onPress={register}/>
         </View>
   );
 }

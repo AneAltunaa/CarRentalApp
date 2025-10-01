@@ -3,32 +3,51 @@ import React, { useState } from 'react';
 import {useNavigation} from '@react-navigation/native';
 
 
-export default function forgotPass() {
+export default function ForgotPass() {
 
   const navigation = useNavigation();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  const changePassword = async () =>{
+    try {
+    //Fetch from backend
+        const response = await fetch('http://10.0.2.2:5000/updatePassword', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        }); 
+        const data = await response.json();
 
+        if (data.success) {
+          Alert.alert('Success', 'Password changed successfully');
+          navigation.navigate('login');
+        } else {
+          Alert.alert('Error', 'Incorrect username');
+        }
+      } catch (err: any) {
+        Alert.alert('Error', err.message);
+      }
+  }
 
   return(
     <View style={styles.container}>
         <Text style={{fontFamily: 'Courier', fontSize:24}}>Password changing</Text>
       <View style={styles.backgroundInput}>
           <View style={styles.labels}>
-          <Text style={{marginRight: 10, marginTop: 10}}>Username:</Text><TextInput placeholder='Enter your Username' style={styles.textStyle}/>
+          <Text style={{marginRight: 10, marginTop: 10}}>Username:</Text><TextInput placeholder='Enter your Username' style={styles.textStyle} value={username} onChangeText={setUsername}/>
           </View>
 
           <View style={styles.labels}>
-          <Text style={{marginRight: 10, marginTop: 10}}>New Password:</Text><TextInput placeholder='Enter you Password' style={styles.textStyle} secureTextEntry/>
+          <Text style={{marginRight: 10, marginTop: 10}}>New Password:</Text><TextInput placeholder='Enter you Password' style={styles.textStyle} value={password} onChangeText={setPassword} secureTextEntry/>
           </View>
       </View>
 
       <Text></Text>
 
 
-      <Button title='Change Password'/>
+      <Button title='Change Password' onPress={changePassword}/>
 
     </View>
   );

@@ -77,6 +77,59 @@ def login():
         return jsonify({"success": True})
     return jsonify({"success": False})
 
+#updatePassword
+@app.route("/updatePassword", methods=["POST"])
+def updatePassword():
+    data = request.json
+    username = data.get("username")
+    new_password = data.get("password")
+
+    if not username or not new_password:
+        return jsonify({"success": False, "message": "Missing username or password"}), 400
+    
+    conn = sqlite3.connect("app.db")
+    c = conn.cursor()
+    c.execute("SELECT id FROM User WHERE email = ?", (username,))
+    row = c.fetchone()
+    
+    if row:
+        c.execute("UPDATE User SET password = ? WHERE email = ?", (new_password, username,))
+        conn.commit()
+        conn.close()
+        return jsonify({"success": True})
+    
+    return jsonify({"success": False})
+
+#register
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.json
+    username = data.get("username")
+    password = data.get("password")
+    name = data.get("name")
+    surname = data.get("surname")
+    dateOfBirth = data.get("dateOfBirth")
+    cpr = data.get("cpr")
+
+    if not username or not password or not name or not surname or not dateOfBirth or not cpr:
+        return jsonify({"success": False, "message": "Missing data"}), 400
+
+    conn = sqlite3.connect("app.db")
+    c = conn.cursor()
+
+    #see if the user exists in DB
+    c.execute("SELECT id FROM User WHERE email = ?", (username,))
+    if c.fetchone():
+        conn.close()
+        return jsonify({"success": False, "message": "User already exists"}), 400
+    
+    c.execute("INSERT INTO User (email, password, name, surname, dateOfBirth, cpr) VALUES (?,?,?,?,?,?)",
+        (username, password, name, surname, dateOfBirth, cpr) )
+    conn.commit()
+    conn.close()
+
+    return jsonify({"success": True})
+
 #car list
 @app.route("/cars", methods=["GET"])
 def get_available_cars():
