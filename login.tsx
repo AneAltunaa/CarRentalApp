@@ -30,7 +30,7 @@ export default function LoginScreen() {
 
       if (data.success) {
 
-        await AsyncStorage.setItem('user', JSON.stringify(data.user)); //store the user for renting
+        await AsyncStorage.setItem('userData', JSON.stringify(data.user)); //store the user for renting
         navigation.navigate('CarTabs');
         
 

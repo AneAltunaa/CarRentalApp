@@ -20,9 +20,11 @@ import UserProfile from './screens/UserProfile';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const CarStack = createNativeStackNavigator();
+const CartStack = createNativeStackNavigator();
+const BookingsStack = createNativeStackNavigator();
 
 
-const CarStackNavigator = ({navigation: parentNavigation }) => {
+const CarStackNavigator = ({navigation: parentNavigation }: any) => {
   return (
     <CarStack.Navigator>
       <CarStack.Screen
@@ -46,17 +48,66 @@ const CarStackNavigator = ({navigation: parentNavigation }) => {
       <CarStack.Screen
         name="CartScreen"
         component={CartScreen} // το component της Cart
-        options={{ title: 'My Cart' }}
-/>
+        options={({ navigation }) => ({
+          title: 'My Cart',
+          headerLeft: () => (
+            <Button title="Back" onPress={() => navigation.goBack()} />
+          ),
+          headerRight: () => (
+            <Button title="UserProfile" onPress={() => parentNavigation.navigate('UserProfile')} />
+          ),
+        })}
+      />
     </CarStack.Navigator>
   );
 };
+
+const CartStackNavigator = ({navigation: parentNavigation }: any) => {
+  return (
+    <CartStack.Navigator>
+      <CartStack.Screen
+        name="CartMain"
+        component={CartScreen}
+        options={({ navigation }) => ({
+          title: 'My Cart',
+          headerLeft: () => (
+            <Button title="Back" onPress={() => parentNavigation.navigate('login')} />
+          ),
+          headerRight: () => (
+            <Button title="UserProfile" onPress={() => parentNavigation.navigate('UserProfile')} />
+          ),
+        })}
+      />
+    </CartStack.Navigator>
+  );
+};
+
+const BookingsStackNavigator = ({navigation: parentNavigation }: any) => {
+  return (
+    <BookingsStack.Navigator>
+      <BookingsStack.Screen
+        name="BookingsMain"
+        component={Bookings}
+        options={({ navigation }) => ({
+          title: 'My Bookings',
+          headerLeft: () => (
+            <Button title="Back" onPress={() => parentNavigation.navigate('login')} />
+          ),
+          headerRight: () => (
+            <Button title="UserProfile" onPress={() => parentNavigation.navigate('UserProfile')} />
+          ),
+        })}
+      />
+    </BookingsStack.Navigator>
+  );
+};
+
 const CarTabs = () => (
       <Tab.Navigator screenOptions={{ headerShown: false, tabBarActiveTintColor: '#6A1B9A' }}>
         <Tab.Screen name="CarsList" component={CarStackNavigator} options={{ title: 'Cars' }} />
         <Tab.Screen name="Location" component={LocationScreen} />
-        <Tab.Screen name="Cart" component={Cart} />
-        <Tab.Screen name="Bookings" component={Bookings} />
+        <Tab.Screen name="Cart" component={CartStackNavigator} options={{ title: 'Cart' }} />
+        <Tab.Screen name="Bookings" component={BookingsStackNavigator} />
       </Tab.Navigator>
     );
 

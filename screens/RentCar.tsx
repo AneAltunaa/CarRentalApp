@@ -29,7 +29,7 @@ const RentCar = () => {
     alert("Please select both start and end dates for the rental.");
     return;
   }
-  const storedUser = await AsyncStorage.getItem('user');
+  const storedUser = await AsyncStorage.getItem('userData');
   const user= storedUser ? JSON.parse(storedUser) : null;
 
   try {
@@ -109,7 +109,7 @@ const RentCar = () => {
                   onPress={() => 
                   setShowSuccessModal(false)
                   }>
-                    <Ionicons name="ios-car" size={30} color="blue" />;
+                    <Ionicons name="car" size={30} color="blue" />
                   <Text style = {styles.backButton}>x</Text>
                 </TouchableOpacity>
                 <Text style = {styles.header}>Rental Confirmed!</Text>
@@ -118,9 +118,16 @@ const RentCar = () => {
               <TouchableOpacity
               style ={styles.modalButton}
               onPress={
-                () => {setShowSuccessModal(false);
-                navigation.navigate('CartScreen');
-              }}>
+                () => {
+                  setShowSuccessModal(false);
+                  // navegar al carrito, dos niveles
+                  const tabNav = navigation.getParent()?.getParent();
+                  if (tabNav) {
+                    (tabNav as any).navigate('CarTabs', {
+                      screen: 'Cart'
+                    });
+                  }
+                }}>
 
                 <Text style = {styles.rental}>Go to Cart</Text>
               </TouchableOpacity>

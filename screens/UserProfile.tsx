@@ -10,7 +10,7 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true);
 
   const getUserInfo = async () => {
-    const storedUser = await AsyncStorage.getItem('user');
+    const storedUser = await AsyncStorage.getItem('userData');
     const parsedUser = storedUser ? JSON.parse(storedUser) : null;
 
     if (parsedUser?.email) {

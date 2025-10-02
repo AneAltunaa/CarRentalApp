@@ -52,15 +52,29 @@ CORS(app)
 #         )
 #     except sqlite3.IntegrityError:
 #         pass
-#
+
+#     # Agregar algunos carros de ejemplo
+#     sample_cars = [
+#         ("BMW Serie 3", "$45/día", "BMWSerie3.png", "2.0L Turbo", "248 HP", "Automático", "Serie 3", "2023"),
+#         ("Audi A4", "$50/día", "audi_a4.png", "2.0L TFSI", "261 HP", "Automático", "A4", "2023"),
+#         ("Mercedes C-Class", "$55/día", "mercedes_c.png", "2.0L Turbo", "255 HP", "Automático", "C-Class", "2023"),
+#         ("Toyota Camry", "$35/día", "toyota_camry.png", "2.5L Hybrid", "208 HP", "CVT", "Camry", "2023"),
+#         ("Honda Accord", "$40/día", "honda_accord.png", "1.5L Turbo", "192 HP", "CVT", "Accord", "2023")
+#     ]
+    
+#     for car in sample_cars:
+#         try:
+#             c.execute(
+#                 "INSERT INTO CarList (name, price, image, engine, power, transmission, model, year, isAvailable) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+#                 car + (1,)
+#             )
+#         except sqlite3.IntegrityError:
+#             pass
+
 #     conn.commit()
 #     conn.close()
 
 # init_db()
-
-
-
-
 
 #login
 @app.route("/login", methods=["POST"])
@@ -162,6 +176,10 @@ def get_user_profile():
 def get_available_cars():
     conn = sqlite3.connect("app.db")
     c = conn.cursor()
+    
+    # once a car is paid for, it stays unavailable
+    
+    # Get available cars
     c.execute("SELECT id, name, price, image, engine, power, transmission, model, year FROM CarList WHERE isAvailable = 1")
     cars = c.fetchall()
     conn.close()
@@ -211,5 +229,172 @@ def rent_car():
     finally:
         conn.close()
 
+#get rental history for cart
+@app.route("/rental-history/<int:user_id>", methods=["GET"])
+def get_rental_history(user_id):
+    conn = sqlite3.connect("app.db")
+    c = conn.cursor()
+    
+    # get unpaid rentals only
+    c.execute("""
+        SELECT r.id, r.startDate, r.endDate, r.CarId, 
+               c.name, c.price, c.image, c.engine, c.power, c.transmission, c.model, c.year
+        FROM RentalHistory r
+        JOIN CarList c ON r.CarId = c.id
+        WHERE r.UserId = ? AND (r.isPaid IS NULL OR r.isPaid = 0)
+        ORDER BY r.id DESC
+    """, (user_id,))
+    
+    rentals = c.fetchall()
+    conn.close()
+
+    rental_list = []
+    for rental in rentals:
+        rental_list.append({
+            "rentalId": rental[0],
+            "startDate": rental[1],
+            "endDate": rental[2],
+            "carId": rental[3],
+            "name": rental[4],
+            "price": rental[5],
+            "image": rental[6],
+            "engine": rental[7],
+            "power": rental[8],
+            "transmission": rental[9],
+            "model": rental[10],
+            "year": rental[11]
+        })
+
+    return jsonify(rental_list)
+
+#get bookings (completed rentals) for bookings page
+@app.route("/bookings/<int:user_id>", methods=["GET"])
+def get_bookings(user_id):
+    conn = sqlite3.connect("app.db")
+    c = conn.cursor()
+    
+    # paid rentals only
+    c.execute("""
+        SELECT r.id, r.startDate, r.endDate, r.CarId, 
+               c.name, c.price, c.image, c.engine, c.power, c.transmission, c.model, c.year
+        FROM RentalHistory r
+        JOIN CarList c ON r.CarId = c.id
+        WHERE r.UserId = ? AND r.isPaid = 1
+        ORDER BY r.id DESC
+    """, (user_id,))
+    
+    bookings = c.fetchall()
+    conn.close()
+
+    booking_list = []
+    for booking in bookings:
+        booking_list.append({
+            "rentalId": booking[0],
+            "startDate": booking[1],
+            "endDate": booking[2],
+            "carId": booking[3],
+            "name": booking[4],
+            "price": booking[5],
+            "image": booking[6],
+            "engine": booking[7],
+            "power": booking[8],
+            "transmission": booking[9],
+            "model": booking[10],
+            "year": booking[11],
+            "status": "completed"
+        })
+
+    return jsonify(booking_list)
+
+#move rental to completed by setting end date to past
+@app.route("/pay-rental/<int:rental_id>", methods=["POST"])
+def pay_rental(rental_id):
+    conn = sqlite3.connect("app.db")
+    c = conn.cursor()
+    
+    try:
+        # check if the rental exists
+        c.execute("SELECT id, startDate, endDate, CarId FROM RentalHistory WHERE id = ?", (rental_id,))
+        rental = c.fetchone()
+        if not rental:
+            return jsonify({"success": False, "message": "Rental not found"}), 404
+        
+        # rental paid (completed)
+        c.execute("""
+            UPDATE RentalHistory 
+            SET isPaid = 1
+            WHERE id = ?
+        """, (rental_id,))
+        
+        # remove from available cars list
+        c.execute("""
+            UPDATE CarList 
+            SET isAvailable = 0 
+            WHERE id = ?
+        """, (rental[3],))
+        
+        conn.commit()
+        return jsonify({"success": True, "message": "Payment processed successfully"})
+    except Exception as e:
+        return jsonify({"success": False, "message": "Payment processing failed"}), 500
+    finally:
+        conn.close()
+
+# ensure isPaid column exists
+def init_db_columns():
+    conn = sqlite3.connect("app.db")
+    c = conn.cursor()
+    
+    try:
+        # Check if isPaid column exists, if not add it
+        c.execute("PRAGMA table_info(RentalHistory)")
+        columns = c.fetchall()
+        has_ispaid = any(column[1] == 'isPaid' for column in columns)
+        
+        if not has_ispaid:
+            c.execute("ALTER TABLE RentalHistory ADD COLUMN isPaid INTEGER DEFAULT 0")
+            conn.commit()
+            
+    except Exception as e:
+        pass
+    finally:
+        conn.close()
+
+#endpoint to initialize database columns
+@app.route("/init-db", methods=["POST"])
+def init_db_endpoint():
+    try:
+        init_db_columns()
+        return jsonify({"success": True, "message": "Database initialized successfully"})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+#reset everything - clear all rentals and make all cars available
+@app.route("/reset-all", methods=["POST"])
+def reset_all():
+    conn = sqlite3.connect("app.db")
+    c = conn.cursor()
+    
+    try:
+        # delete all rental history
+        c.execute("DELETE FROM RentalHistory")
+        deleted_rentals = c.rowcount
+        
+        # Make all cars available
+        c.execute("UPDATE CarList SET isAvailable = 1")
+        updated_cars = c.rowcount
+        
+        conn.commit()
+        
+        return jsonify({
+            "success": True, 
+            "message": f"Reset complete: Deleted {deleted_rentals} rentals, made {updated_cars} cars available"
+        })
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+    finally:
+        conn.close()
+
 if __name__ == "__main__":
+    init_db_columns()  # Initialize the database columns
     app.run(port=5000, debug=True)
