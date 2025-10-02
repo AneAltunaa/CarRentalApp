@@ -131,6 +131,29 @@ def register():
 
     return jsonify({"success": True})
 
+#user profile
+@app.route("/userprofile", methods=["GET"])
+def get_user_profile():
+    data = request.json
+    username = data.get("username")
+
+    conn = sqlite3.connect("app.db")
+    c = conn.cursor()
+    c.execute("SELECT email, name, surname, dateOfBirth, cpr FROM User WHERE email = ?", (username,))
+    row = c.fetchone()
+    conn.close()
+
+    if row:
+        user = {
+            "email": row[0],
+            "name": row[1],
+            "surname": row[2],
+            "dateOfBirth": row[3],
+            "cpr": row[4]
+        }
+
+    return jsonify(user)
+
 #car list
 @app.route("/cars", methods=["GET"])
 def get_available_cars():
