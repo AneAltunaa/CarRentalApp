@@ -45,7 +45,7 @@ export default function RegisterScreen() {
 
           <LinearGradient colors={["#A46FFF", "#0011FF"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.inputGradientBorder}>
             <View style={styles.inputInner}>
-              <TextInput placeholder="Username" value={username} onChangeText={setUsername} style={styles.inputFieldInner}/>
+              <TextInput placeholder="Email" value={username} onChangeText={setUsername} style={styles.inputFieldInner}/>
             </View>
           </LinearGradient>
 

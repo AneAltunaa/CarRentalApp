@@ -134,7 +134,7 @@ def register():
 #user profile
 @app.route("/userprofile", methods=["GET"])
 def get_user_profile():
-    username = request.args.get("username")  # <- pobiera z query string
+    username = request.args.get("username")
 
     conn = sqlite3.connect("app.db")
     c = conn.cursor()
@@ -152,7 +152,7 @@ def get_user_profile():
         }
         return jsonify(user)
     
-    return jsonify(None), 404  # brak użytkownika
+    return jsonify(None), 404
 
 
 #car list
