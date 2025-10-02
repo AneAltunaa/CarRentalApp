@@ -15,6 +15,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import RentCar from './screens/RentCar';
+import UserProfile from './screens/UserProfile';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -31,6 +32,9 @@ const CarStackNavigator = ({navigation: parentNavigation }) => {
           title: 'Cars',
           headerLeft: () => (
             <Button title="Back" onPress={() => parentNavigation.navigate('login')} />
+          ),
+          headerRight: () => (
+            <Button title="UserProfile" onPress={() => parentNavigation.navigate('UserProfile')} />
           ),
         })}
       />
@@ -104,6 +108,14 @@ export default function App() {
           component={CarTabs}
           options={{ headerShown: false}} // header hidden γιατί κάθε tab έχει δικό του header
         />
+
+        <Stack.Screen
+        name='UserProfile'
+        component={UserProfile}
+        options={{headerShown:false}
+        }
+        />
+
       </Stack.Navigator>
     </NavigationContainer>
    

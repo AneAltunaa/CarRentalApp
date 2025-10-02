@@ -36,7 +36,7 @@ export default function ForgotPass() {
         <Text style={{fontFamily: 'Courier', fontSize:24}}>Password changing</Text>
       <View style={styles.backgroundInput}>
           <View style={styles.labels}>
-          <Text style={{marginRight: 10, marginTop: 10}}>Username:</Text><TextInput placeholder='Enter your Username' style={styles.textStyle} value={username} onChangeText={setUsername}/>
+          <Text style={{marginRight: 10, marginTop: 10}}>Username:</Text><TextInput placeholder='Enter your email' style={styles.textStyle} value={username} onChangeText={setUsername}/>
           </View>
 
           <View style={styles.labels}>
