@@ -1,40 +1,49 @@
-import React, {useEffect} from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Button } from 'react-native/types_generated/index';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {getUser} from '../data/user';
-
+import { getUser, User } from '../data/user';
+import { useNavigation } from '@react-navigation/native';
 
 const UserProfile = () => {
+  const navigation = useNavigation();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const getUserInfo = async() => {
-      const storedUser = await AsyncStorage.getItem('user');
-      const user= storedUser ? JSON.parse(storedUser) : null;
+  const getUserInfo = async () => {
+    const storedUser = await AsyncStorage.getItem('user');
+    const parsedUser = storedUser ? JSON.parse(storedUser) : null;
 
-      const userInfo = getUser(user.email);
-      return userInfo;
-  }
+    if (parsedUser?.email) {
+      const userInfo = await getUser(parsedUser.email);
+      setUser(userInfo);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     getUserInfo();
   }, []);
 
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
-    // A container view to center the content
     <View style={styles.container}>
-      <Button title="Back"/>
-
-
-      <Text>Email: {}</Text>
-      <Text>Name: </Text>
-      <Text>Surname: </Text>
-      <Text>Date of Birth: </Text>
-      <Text>CPR: </Text>
+      <Button title="Back" onPress={() => navigation.goBack()} />
+      <Text>Email: {user?.email}</Text>
+      <Text>Name: {user?.name}</Text>
+      <Text>Surname: {user?.surname}</Text>
+      <Text>Date of Birth: {user?.dateOfBirth}</Text>
+      <Text>CPR: {user?.cpr}</Text>
     </View>
   );
 };
 
-// Basic styles for the container
 const styles = StyleSheet.create({
   container: {
     flex: 1,
