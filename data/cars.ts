@@ -19,11 +19,16 @@ export const getCars = async (): Promise<Car[]> => {
       name: car.name,
       price: car.price,
       image: car.image,
+      engine: car.engine,
+      model: car.model,
+      year: car.year,
+      power: car.power,
+      transmission: car.transmission,
     }));
 
     return cars;
   } catch (err) {
-    console.error("Błąd przy pobieraniu aut:", err);
+    console.error("Error downloading cars data:", err);
     return [];
   }
 };
