@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Button} from 'react-native';
 import login from './login';
 import register from './register';
 import Home from './Home';
+import CartScreen from './screens/CartScreen';
 import CarListScreen from './screens/CarListScreen';
 import LocationScreen from './screens/LocationScreen';
 import Cart from './screens/CartScreen';
@@ -38,6 +39,11 @@ const CarStackNavigator = ({navigation: parentNavigation }) => {
         component={RentCar}
         options={{ title: 'Rent a Car', headerLeft: () => null}} // Disable back button
       />
+      <CarStack.Screen
+        name="CartScreen"
+        component={CartScreen} // το component της Cart
+        options={{ title: 'My Cart' }}
+/>
     </CarStack.Navigator>
   );
 };

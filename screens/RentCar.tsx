@@ -4,8 +4,10 @@ import CarDetails from '../components/CarDetails';
 import { Calendar , CalendarProps } from 'react-native-calendars';
 import RentCalendar from '../components/RentCalendar';
 import { Alert } from 'react-native';
-import { View, StyleSheet, ScrollView, Text, Image, TouchableHighlight, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Modal, View, StyleSheet, ScrollView, Text, Image, TouchableHighlight, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
 
 // for map part
 import MapComponent from '../components/MapComponent';
@@ -16,7 +18,9 @@ type RentCarRouteProp = RouteProp<RootStackParamList, 'RentCar'>;
 const RentCar = () => {
   const route = useRoute<RentCarRouteProp>();
   const { car } = route.params;
+  const navigation = useNavigation();
 
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
@@ -43,7 +47,7 @@ const RentCar = () => {
     const result = await response.json();
 
     if (result.success) {
-      Alert.alert("Success", "Rental confirmed successfully!");
+      setShowSuccessModal(true);
     } else {
       Alert.alert("Error", result.message);
     }
@@ -92,6 +96,37 @@ const RentCar = () => {
                 </Text>
             </TouchableHighlight>
         </View>
+        <Modal 
+        visible={showSuccessModal}
+        transparent={true}
+        animationType="slide">
+          <View style = {styles.modal}>
+            <View style = {styles.content}>
+              <View style ={{flexDirection: 'row',width: '100%', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20
+              }}>
+                <TouchableOpacity
+                  style ={styles.cross}
+                  onPress={() => 
+                  setShowSuccessModal(false)
+                  }>
+                    <Ionicons name="ios-car" size={30} color="blue" />;
+                  <Text style = {styles.backButton}>x</Text>
+                </TouchableOpacity>
+                <Text style = {styles.header}>Rental Confirmed!</Text>
+              </View>
+              <Text style = {styles.text} >You have successfully rented the {car.name} from {startDate} to {endDate}.</Text>
+              <TouchableOpacity
+              style ={styles.modalButton}
+              onPress={
+                () => {setShowSuccessModal(false);
+                navigation.navigate('CartScreen');
+              }}>
+
+                <Text style = {styles.rental}>Go to Cart</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
         
     </ScrollView>
   );
@@ -161,6 +196,51 @@ const styles = StyleSheet.create({
       borderRadius: 15,
       overflow: 'hidden',
       marginBottom: 20,
+    },
+    modal: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)', // διάφανο μαύρο φόντο
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    content: {
+      width: '85%',
+      backgroundColor: 'white',
+      borderRadius: 20,
+      paddingTop: 10,
+      paddingRight: 20,
+      paddingLeft: 20,
+      paddingBottom: 20,
+      alignItems: 'center'
+    },
+    modalButton: {
+      marginTop: 40,
+      backgroundColor: 'blue',
+      borderRadius: 15,
+      paddingHorizontal: 10,
+      alignSelf: 'flex-end'
+    },
+    header: {
+      position: 'absolute',
+      left: '50%',
+      transform: [{ translateX: '-50%' }],
+      fontSize: 22,
+      marginTop: 10,
+      textAlign: 'center',
+      fontWeight: 'bold',
+    },
+    text: {
+      fontSize: 18,
+      textAlign: 'center',
+      marginBottom: 10,
+    },
+    cross: {
+      alignSelf: 'flex-start',
+    },
+    backButton: {
+      color: 'red',
+      alignSelf: 'flex-start',  
+      fontSize: 30,
     }
 });
 export default RentCar;

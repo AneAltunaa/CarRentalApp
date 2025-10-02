@@ -6,6 +6,11 @@ export interface Car {
   name: string;
   price: number;
   image: string;
+  engine: string;
+  model: string;
+  year: number;
+  power: string;
+  transmission: string;
 }
 
 //fetch from backend
