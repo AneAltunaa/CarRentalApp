@@ -19,7 +19,7 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const CarStack = createNativeStackNavigator();
 
-// Εδώ φτιάχνουμε τον stack navigator για το Cars tab
+
 const CarStackNavigator = ({navigation: parentNavigation }) => {
   return (
     <CarStack.Navigator>

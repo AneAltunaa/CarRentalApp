@@ -1,8 +1,7 @@
 import { StyleSheet, Text, TextInput, Alert, View, Button } from 'react-native';
 import React, { useState } from 'react';
 import {useNavigation} from '@react-navigation/native'; 
-
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface LoginScreenProps {
   username: string | null; 
@@ -30,7 +29,11 @@ export default function LoginScreen() {
       const data = await response.json();
 
       if (data.success) {
+
+        await AsyncStorage.setItem('user', JSON.stringify(data.user)); //store the user for renting
         navigation.navigate('CarTabs');
+        
+
       } else {
         Alert.alert('Error', 'Incorrect username or password');
       }

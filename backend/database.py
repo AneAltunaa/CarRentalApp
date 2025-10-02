@@ -69,12 +69,13 @@ def login():
 
     conn = sqlite3.connect("app.db")
     c = conn.cursor()
-    c.execute("SELECT password FROM User WHERE email = ?", (username,))
+    c.execute("SELECT id, password FROM User WHERE email = ?", (username,))
     row = c.fetchone()
     conn.close()
 
-    if row and row[0] == password:
-        return jsonify({"success": True})
+    if row and row[1] == password:
+        id = row[0]
+        return jsonify({"success": True, "user": {"id":id,"email": username}})
     return jsonify({"success": False})
 
 #updatePassword
