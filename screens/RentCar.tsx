@@ -5,6 +5,7 @@ import { Calendar , CalendarProps } from 'react-native-calendars';
 import RentCalendar from '../components/RentCalendar';
 import { Alert } from 'react-native';
 import { View, StyleSheet, ScrollView, Text, Image, TouchableHighlight, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // for map part
 import MapComponent from '../components/MapComponent';
@@ -24,6 +25,8 @@ const RentCar = () => {
     alert("Please select both start and end dates for the rental.");
     return;
   }
+  const storedUser = await AsyncStorage.getItem('user');
+  const user= storedUser ? JSON.parse(storedUser) : null;
 
   try {
     const response = await fetch("http://10.0.2.2:5000/rent", {
@@ -32,7 +35,7 @@ const RentCar = () => {
       body: JSON.stringify({
         startDate,
         endDate,
-        userId: 1,   //for now, change to current logged user TODO
+        userId: user.id,   //for now, change to current logged user TODO
         carId: car.id,
       }),
     });

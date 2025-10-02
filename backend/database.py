@@ -69,12 +69,13 @@ def login():
 
     conn = sqlite3.connect("app.db")
     c = conn.cursor()
-    c.execute("SELECT password FROM User WHERE email = ?", (username,))
+    c.execute("SELECT id, password FROM User WHERE email = ?", (username,))
     row = c.fetchone()
     conn.close()
 
-    if row and row[0] == password:
-        return jsonify({"success": True})
+    if row and row[1] == password:
+        id = row[0]
+        return jsonify({"success": True, "user": {"id":id,"email": username}})
     return jsonify({"success": False})
 
 #updatePassword
@@ -129,6 +130,30 @@ def register():
     conn.close()
 
     return jsonify({"success": True})
+
+#user profile
+@app.route("/userprofile", methods=["GET"])
+def get_user_profile():
+    username = request.args.get("username")  # <- pobiera z query string
+
+    conn = sqlite3.connect("app.db")
+    c = conn.cursor()
+    c.execute("SELECT email, name, surname, dateOfBirth, cpr FROM User WHERE email = ?", (username,))
+    row = c.fetchone()
+    conn.close()
+
+    if row:
+        user = {
+            "email": row[0],
+            "name": row[1],
+            "surname": row[2],
+            "dateOfBirth": row[3],
+            "cpr": row[4]
+        }
+        return jsonify(user)
+    
+    return jsonify(None), 404  # brak użytkownika
+
 
 #car list
 @app.route("/cars", methods=["GET"])
