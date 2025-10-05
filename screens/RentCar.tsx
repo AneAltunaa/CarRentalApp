@@ -7,7 +7,7 @@ import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Modal, View, StyleSheet, ScrollView, Text, Image, TouchableHighlight, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons } from '@expo/vector-icons';
+
 
 // for map part
 import MapComponent from '../components/MapComponent';

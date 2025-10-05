@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Button } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 // Import the 'Car' type from our data file
@@ -24,7 +24,11 @@ const CarCard: React.FC<CarCardProps> = ({ car,onRent}) => {
       {/* <Text style={styles.infoLink}>More Information</Text> */}
       <View style={styles.bottomRow}>
         <Text style={styles.price}>{car.price} € / day</Text>
-      <Button title="Rent" onPress={onRent} />
+        <TouchableOpacity
+        style ={styles.rentButton}
+        onPress={onRent}>
+          <Text style = {styles.rental}>Rent</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -78,6 +82,19 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
     },
+    rentButton: {
+      marginTop: 40,
+      backgroundColor: 'blue',
+      borderRadius: 15,
+      paddingHorizontal: 10,
+      alignSelf: 'flex-end'
+    },
+    rental: {
+        color: 'white',
+        padding: 10,
+        fontSize: 18,
+        alignSelf: 'center',
+    }
 });
 
 // Export the component so it can be used in other files
