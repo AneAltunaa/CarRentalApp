@@ -15,6 +15,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons'
 import RentCar from './screens/RentCar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserProfile from './screens/UserProfile';
 
 const Stack = createNativeStackNavigator();
@@ -33,12 +34,27 @@ const CarStackNavigator = () => {
           headerTitleAlign: 'center',
           headerTitleStyle: { fontSize: 22, fontWeight: 'bold' },
           headerLeft: () => (
-            <Ionicons
-              name="arrow-back"
-              size={26}
-              color="black"
-              style={{ marginLeft: 10 }}
-              onPress={() => navigation.getParent()?.navigate('login')}/>),
+          <TouchableOpacity
+            style={{
+              marginLeft: 10,
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+              backgroundColor: 'black',
+              borderRadius: 8,
+            }}
+            onPress={async () => {
+              // Καθαρίζουμε τον χρήστη
+              await AsyncStorage.removeItem('user');
+              // Πάμε στο login και reset stack
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'login' }],
+              });
+            }}
+          >
+            <Text style={{ color: 'blue', fontWeight: 'bold' }}>Logout</Text>
+          </TouchableOpacity>
+        ),
           headerRight: () => (
             <TouchableOpacity
               onPress={() => navigation.navigate('UserProfile')}>
@@ -161,9 +177,25 @@ export default function App() {
         <Stack.Screen
         name='login'
         component={login}
-        options={{headerShown:true}
-        }
-        />
+        options={({ navigation }) => ({
+          headerShown: true,
+          title: 'Back',
+          headerLeft: () => (
+            <Ionicons
+              name="arrow-back"
+              size={26}
+              color="black"
+              style={{ marginLeft: 10 }}
+              onPress={() => {  
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Home' }],
+                });
+              }}
+              />
+            ),
+          })}
+        />  
         <Stack.Screen
         name='register'
         component={register}
