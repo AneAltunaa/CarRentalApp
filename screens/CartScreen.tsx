@@ -22,7 +22,7 @@ interface RentalCar {
   endDate: string;
   carId: number;
   name: string;
-  price: string;
+  price: string; 
   image: string;
   engine: string;
   power: string;
@@ -156,23 +156,7 @@ const CartScreen = () => {
     }
     
     // calcular precio por dia
-    let pricePerDay = 0;
-    
-    const priceMatch = item.price.match(/\$(\d+)(?:\/d[íi]a|\/day)?/i);
-    if (priceMatch) {
-      pricePerDay = parseInt(priceMatch[1]);
-    }
-    
-    if (pricePerDay === 0) {
-      const fallbackMatch = item.price.match(/\$?(\d+)/);
-      if (fallbackMatch) {
-        pricePerDay = parseInt(fallbackMatch[1]);
-      }
-    }
-    
-    if (pricePerDay === 0) {
-      pricePerDay = 50; // default if not found
-    }
+    const pricePerDay = parseInt(item.price) || 50; 
     
     const totalPrice = pricePerDay * daysDiff;
     
@@ -188,7 +172,7 @@ const CartScreen = () => {
       {/* Header Section */}
       <View style={styles.headerSection}>
         <Text style={styles.title}>{item.name}</Text>
-        <Text style={styles.subtitle}>{item.model} • {item.year}</Text>
+        <Text style={styles.subtitle}>{item.year}</Text>
       </View>
 
       {/* Image Section */}
@@ -199,22 +183,16 @@ const CartScreen = () => {
 
       {/* Content Section */}
       <View style={styles.contentSection}>
-        {/* Rental Period Section */}
-        <View style={styles.rentalSection}>
-          <Text style={styles.sectionTitle}>Rental Period</Text>
-          <View style={styles.dateContainer}>
-            <View style={styles.dateColumn}>
-              <Text style={styles.dateLabel}>From</Text>
-              <Text style={styles.dateText}>{formatDate(item.startDate)}</Text>
-            </View>
-            <View style={styles.dateSeparator}>
-              <Text style={styles.arrowText}>→</Text>
-            </View>
-            <View style={styles.dateColumn}>
-              <Text style={styles.dateLabel}>To</Text>
-              <Text style={styles.dateText}>{formatDate(item.endDate)}</Text>
-            </View>
-          </View>
+        {/*Date Section */}
+        <View style={styles.simpleDateSection}>
+          <Text style={styles.simpleDateText}>
+            <Text style={styles.dateLabel}>From: </Text>
+            {formatDate(item.startDate)}
+          </Text>
+          <Text style={styles.simpleDateText}>
+            <Text style={styles.dateLabel}>To: </Text>
+            {formatDate(item.endDate)}
+          </Text>
         </View>
 
         {/* Price and Payment Section */}
@@ -372,36 +350,20 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 10,
   },
-  dateContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#e3f2fd',
-    borderRadius: 16,
-    padding: 15,
-  },
-  dateColumn: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  dateSeparator: {
+  simpleDateSection: {
     paddingHorizontal: 15,
+    paddingVertical: 15,
+    alignItems: 'center',
   },
-  arrowText: {
+  simpleDateText: {
     fontSize: 24,
-    color: '#2196f3',
-    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+    textAlign: 'center',
   },
   dateLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666',
-    marginBottom: 5,
-  },
-  dateText: {
-    fontSize: 16,
     fontWeight: 'bold',
-    color: '#1a1a1a',
+    color: '#000',
   },
   paymentSection: {
     alignItems: 'center',
@@ -416,7 +378,6 @@ const styles = StyleSheet.create({
   totalLine: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2196f3',
     marginBottom: 5,
   },
   priceBreakdown: {
@@ -426,17 +387,12 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   payButton: {
-    backgroundColor: '#2196f3',
+    backgroundColor: 'blue',
     paddingVertical: 12,
     paddingHorizontal: 40,
     borderRadius: 20,
     alignItems: 'center',
     alignSelf: 'center',
-    shadowColor: '#2196f3',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
   },
   payButtonText: {
     color: 'white',

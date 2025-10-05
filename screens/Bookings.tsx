@@ -92,22 +92,8 @@ const Bookings = () => {
       daysDiff = 1;
     }
     
-    let pricePerDay = 0;
-    const priceMatch = item.price.match(/\$(\d+)(?:\/d[íi]a|\/day)?/i);
-    if (priceMatch) {
-      pricePerDay = parseInt(priceMatch[1]);
-    }
-    
-    if (pricePerDay === 0) {
-      const fallbackMatch = item.price.match(/\$?(\d+)/);
-      if (fallbackMatch) {
-        pricePerDay = parseInt(fallbackMatch[1]);
-      }
-    }
-    
-    if (pricePerDay === 0) {
-      pricePerDay = 50;
-    }
+    // calcular precio por dia 
+    const pricePerDay = parseInt(item.price) || 50; // fallback to 50 si no se puede parsear
     
     const totalPrice = pricePerDay * daysDiff;
     
@@ -123,10 +109,7 @@ const Bookings = () => {
       {/* Header Section */}
       <View style={styles.headerSection}>
         <Text style={styles.title}>{item.name}</Text>
-        <Text style={styles.subtitle}>{item.model} • {item.year}</Text>
-        <Text style={styles.statusBadge}>
-          {item.status === 'completed' ? 'Completed' : 'Paid'}
-        </Text>
+        <Text style={styles.subtitle}>{item.year}</Text>
       </View>
 
       {/* Image Section */}
@@ -136,22 +119,16 @@ const Bookings = () => {
 
       {/* Content Section */}
       <View style={styles.contentSection}>
-        {/* Rental Period Section */}
-        <View style={styles.rentalSection}>
-          <Text style={styles.sectionTitle}>Rental Period</Text>
-          <View style={styles.dateContainer}>
-            <View style={styles.dateColumn}>
-              <Text style={styles.dateLabel}>From</Text>
-              <Text style={styles.dateText}>{formatDate(item.startDate)}</Text>
-            </View>
-            <View style={styles.dateSeparator}>
-              <Text style={styles.arrowText}>→</Text>
-            </View>
-            <View style={styles.dateColumn}>
-              <Text style={styles.dateLabel}>To</Text>
-              <Text style={styles.dateText}>{formatDate(item.endDate)}</Text>
-            </View>
-          </View>
+        {/*Date Section */}
+        <View style={styles.simpleDateSection}>
+          <Text style={styles.simpleDateText}>
+            <Text style={styles.dateLabel}>From: </Text>
+            {formatDate(item.startDate)}
+          </Text>
+          <Text style={styles.simpleDateText}>
+            <Text style={styles.dateLabel}>To: </Text>
+            {formatDate(item.endDate)}
+          </Text>
         </View>
 
         {/* Total Section */}
@@ -215,8 +192,8 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   cardContainer: {
-    height: height * 0.45, 
-    width: width * 0.9,
+    height: height * 0.5, 
+    width: width * 0.85,
     backgroundColor: 'white',
     paddingHorizontal: 15,
     paddingVertical: 15,
@@ -235,29 +212,21 @@ const styles = StyleSheet.create({
   },
   headerSection: {
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
+    marginTop: 5,
   },
   title: {
-    fontSize: 20, 
+    fontSize: 24, 
     fontWeight: 'bold',
     color: '#1a1a1a',
     textAlign: 'center',
-    marginBottom: 3,
+    marginBottom: 5,
   },
   subtitle: {
-    fontSize: 14, 
+    fontSize: 16, 
     color: '#666',
     textAlign: 'center',
     marginBottom: 5,
-  },
-  statusBadge: {
-    backgroundColor: '#2196f3',
-    color: 'white',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-    fontSize: 12,
-    fontWeight: 'bold',
   },
   imageSection: {
     flex: 1,
@@ -286,47 +255,31 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 8,
   },
-  dateContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#e3f2fd',
-    borderRadius: 12,
-    padding: 10,
-  },
-  dateColumn: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  dateSeparator: {
+  simpleDateSection: {
     paddingHorizontal: 15,
+    paddingVertical: 15,
+    alignItems: 'center',
   },
-  arrowText: {
+  simpleDateText: {
     fontSize: 20,
-    color: '#2196f3',
-    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+    textAlign: 'center',
   },
   dateLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#666',
-    marginBottom: 3,
-  },
-  dateText: {
-    fontSize: 14,
     fontWeight: 'bold',
-    color: '#1a1a1a',
+    color: '#000',
   },
   totalSection: {
     alignItems: 'center',
     paddingBottom: 10,
-    marginTop: 5,
+    marginTop: 3,
     paddingHorizontal: 10,
   },
   totalLine: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#2196f3',
+    color: 'blue',
     marginBottom: 3,
   },
   priceBreakdown: {
