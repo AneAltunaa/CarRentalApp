@@ -7,7 +7,7 @@ import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Modal, View, StyleSheet, ScrollView, Text, Image, TouchableHighlight, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons } from '@expo/vector-icons';
+
 
 // for map part
 import MapComponent from '../components/MapComponent';
@@ -109,7 +109,6 @@ const RentCar = () => {
                   onPress={() => 
                   setShowSuccessModal(false)
                   }>
-                    <Ionicons name="ios-car" size={30} color="blue" />;
                   <Text style = {styles.backButton}>x</Text>
                 </TouchableOpacity>
                 <Text style = {styles.header}>Rental Confirmed!</Text>
@@ -119,7 +118,7 @@ const RentCar = () => {
               style ={styles.modalButton}
               onPress={
                 () => {setShowSuccessModal(false);
-                navigation.navigate('CartScreen');
+                navigation.getParent()?.jumpTo('Cart');
               }}>
 
                 <Text style = {styles.rental}>Go to Cart</Text>
