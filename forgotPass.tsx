@@ -1,79 +1,154 @@
-import { StyleSheet, Text, TextInput, Alert, View, Button } from 'react-native';
+import { StyleSheet, Text, TextInput, Alert, View, Button, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
-import {useNavigation} from '@react-navigation/native';
-
+import { useNavigation } from '@react-navigation/native';
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function ForgotPass() {
-
   const navigation = useNavigation();
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const changePassword = async () =>{
+  const changePassword = async () => {
     try {
-    //Fetch from backend
-        const response = await fetch('http://10.0.2.2:5000/updatePassword', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password }),
-        }); 
-        const data = await response.json();
+      const response = await fetch('http://10.0.2.2:5000/updatePassword', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await response.json();
 
-        if (data.success) {
-          Alert.alert('Success', 'Password changed successfully');
-          navigation.navigate('login');
-        } else {
-          Alert.alert('Error', 'Incorrect username');
-        }
-      } catch (err: any) {
-        Alert.alert('Error', err.message);
+      if (data.success) {
+        Alert.alert('Success', 'Password changed successfully');
+        navigation.navigate('login');
+      } else {
+        Alert.alert('Error', 'Incorrect username');
       }
-  }
+    } catch (err: any) {
+      Alert.alert('Error', err.message);
+    }
+  };
 
-  return(
-    <View style={styles.container}>
-        <Text style={{fontFamily: 'Courier', fontSize:24}}>Password changing</Text>
-      <View style={styles.backgroundInput}>
-          <View style={styles.labels}>
-          <Text style={{marginRight: 10, marginTop: 10}}>Username:</Text><TextInput placeholder='Enter your email' style={styles.textStyle} value={username} onChangeText={setUsername}/>
-          </View>
+  return (
+    <LinearGradient
+      colors={["#0011FF", "#A46FFF"]}
+      start={{ x: 1, y: 1 }}
+      end={{ x: 0, y: 0 }}
+      style={styles.outerGradientContainer}
+    >
+      <View style={styles.outerContainerInner}>
+        <View style={styles.innerContainer}>
+          <Text style={styles.title}>Change Password</Text>
 
-          <View style={styles.labels}>
-          <Text style={{marginRight: 10, marginTop: 10}}>New Password:</Text><TextInput placeholder='Enter you Password' style={styles.textStyle} value={password} onChangeText={setPassword} secureTextEntry/>
-          </View>
+          <LinearGradient
+            colors={["#A46FFF", "#0011FF"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.inputGradientBorder}
+          >
+            <View style={styles.inputInner}>
+              <TextInput
+                placeholder="Enter your username"
+                value={username}
+                onChangeText={setUsername}
+                style={styles.inputFieldInner}
+              />
+            </View>
+          </LinearGradient>
+
+          <LinearGradient
+            colors={["#A46FFF", "#0011FF"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.inputGradientBorder}
+          >
+            <View style={styles.inputInner}>
+              <TextInput
+                placeholder="Enter new password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                style={styles.inputFieldInner}
+              />
+            </View>
+          </LinearGradient>
+
+          <TouchableOpacity onPress={changePassword} activeOpacity={0.8}>
+            <LinearGradient
+              colors={["#0011FF", "#A46FFF"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.loginButton}
+            >
+              <Text style={styles.loginButtonText}>Change Password</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
       </View>
-
-      <Text></Text>
-
-
-      <Button title='Change Password' onPress={changePassword}/>
-
-    </View>
+    </LinearGradient>
   );
 }
 
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textStyle:{
-      borderColor: 'black',
-      borderWidth: 0.5,
-      borderRadius: 10,
-      marginBottom: 5
-      },
-  labels:{
-      flexDirection:'row', },
-   backgroundInput:{
-       borderColor:'black',
-       borderWidth:1,
-       padding: 40,
-       borderRadius: 20,
-       },
+  outerGradientContainer: {
+    marginTop: "25%",
+    width: "90%",
+    height: "70%",
+    borderRadius: 40,
+    marginLeft: "auto",
+    marginRight: "auto",
+    padding: 2,
 
+    shadowColor: "#000",
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+
+    elevation: 5,
+  },
+  outerContainerInner: {
+    flex: 1,
+    borderRadius: 38,
+    backgroundColor: "white",
+  },
+  innerContainer: {
+    width: "80%",
+    marginLeft: "auto",
+    marginRight: "auto",
+    alignItems: "center",
+    marginTop: 50,
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: "bold",
+    marginBottom: 40,
+  },
+  inputGradientBorder: {
+    borderRadius: 20,
+    padding: 2,
+    marginTop: 10,
+    marginBottom: 10,
+    width: "100%",
+  },
+  inputInner: {
+    borderRadius: 18,
+    backgroundColor: "#f8f8f8",
+  },
+  inputFieldInner: {
+    height: 50,
+    paddingLeft: 15,
+    fontSize: 16,
+  },
+  loginButton: {
+    marginTop: 40,
+    width: 200,
+    height: 60,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+  },
+  loginButtonText: {
+    fontSize: 20,
+    color: "white",
+    fontWeight: "bold",
+  },
 });
