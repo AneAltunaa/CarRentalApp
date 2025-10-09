@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Modal, View, StyleSheet, ScrollView, Text, Image, TouchableHighlight, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
-
+import { LinearGradient } from "expo-linear-gradient";
 
 // for map part
 import MapComponent from '../components/MapComponent';
@@ -58,6 +58,12 @@ const RentCar = () => {
     
   return (
     <ScrollView>
+      <LinearGradient
+                          colors={["#0011FF", "#A46FFF"]}
+                          start={{ x: 1, y: 1 }}
+                          end={{ x: 0, y: 0 }}
+                          style = {styles.gradientBorder}
+                        >
         <View style={styles.cardContainer}>
             <Text style={styles.title}>{car.name}</Text>
             <Image source={{ uri: car.image }} style={{ width: 300, height: 200 }} />
@@ -88,13 +94,22 @@ const RentCar = () => {
             setStartDate(start);
             setEndDate(end);
           }} />
-            <TouchableHighlight style={styles.rentButtoon }
+
+            <TouchableHighlight 
                 onPress={handleConfirmRental}>
+                  <LinearGradient
+                                      colors={["#0011FF", "#A46FFF"]}
+                                      start={{ x: 1, y: 1 }}
+                                      end={{ x: 0, y: 0 }}
+                                      style={styles.rentButton}
+                                    >
                 <Text style={styles.rental}>
                     Confirm Rental
                 </Text>
+                </LinearGradient>
             </TouchableHighlight>
         </View>
+        </LinearGradient>
         <Modal 
         visible={showSuccessModal}
         transparent={true}
@@ -139,17 +154,23 @@ const RentCar = () => {
 };
 
 const styles = StyleSheet.create({
+  gradientBorder: {
+      width:'90%',
+        padding: 2, // πάχος του “border”
+        borderRadius: 22,
+        alignItems: "center",
+      justifyContent: "center",
+      marginVertical: 10,
+        marginHorizontal: 15,
+  },
     cardContainer: {
         display: 'flex',
         flexDirection: 'column',
-        borderColor: 'blue',
-        borderWidth: 1.5,
-        width: '90%',
+        width: '100%',
         backgroundColor: 'white',
         borderRadius: 20,
         padding: 20,
-        marginVertical: 10,
-        marginHorizontal: 15,
+        
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -176,8 +197,7 @@ const styles = StyleSheet.create({
         color: 'blue',
         textDecorationLine: 'underline',
     },
-    rentButtoon: {
-        backgroundColor: 'blue',
+    rentButton: {
         borderRadius: 15,
         width: 150,
         alignSelf: 'flex-end'

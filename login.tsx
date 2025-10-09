@@ -85,8 +85,17 @@ export default function LoginScreen() {
               />
             </View>
           </LinearGradient>
+            <TouchableOpacity onPress={() => navigation.navigate('ForgotPass')} activeOpacity={0.8} />
+              <LinearGradient
+              colors={["#0011FF", "#A46FFF"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.forgetButton}
+            >
+              <Text style={styles.forgotPassword}>Forgot Password</Text>   
+            </LinearGradient>
 
-          <Button title='Forgot the password' onPress={() => navigation.navigate('ForgotPass')} />
+          
 
           <TouchableOpacity onPress={loginFunction} activeOpacity={0.8}>
             <LinearGradient
@@ -153,7 +162,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   loginButton: {
-    marginTop: 50,
+    marginTop: 40,
     width: 120,
     height: 60,
     alignItems: "center",
@@ -164,5 +173,17 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "white",
     fontWeight: "bold",
+  },
+  forgotPassword: {
+    fontSize: 16,
+    color: "white"
+  },
+  forgetButton: {
+    marginTop: 20,
+    width: 160,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
   },
 });

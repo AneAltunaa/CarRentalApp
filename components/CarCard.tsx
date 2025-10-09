@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 // Import the 'Car' type from our data file
 import { Car } from '../data/cars';
+import { LinearGradient } from "expo-linear-gradient";
 
 
 // Define the type for the props this components will receive
@@ -18,6 +19,12 @@ interface CarCardProps {
 // It uses destrucuring to get the 'car' object directly from prps
 const CarCard: React.FC<CarCardProps> = ({ car,onRent}) => {
   return (
+    <LinearGradient
+                    colors={["#0011FF", "#A46FFF"]}
+                    start={{ x: 1, y: 1 }}
+                    end={{ x: 0, y: 0 }}
+                    style = {styles.gradientBorder}
+                  >
     <View style={styles.cardContainer}>
       <Text style={styles.title}>{car.name}</Text>
       <Image source={{uri: car.image}} style={styles.image} />
@@ -25,12 +32,20 @@ const CarCard: React.FC<CarCardProps> = ({ car,onRent}) => {
       <View style={styles.bottomRow}>
         <Text style={styles.price}>{car.price} € / day</Text>
         <TouchableOpacity
-        style ={styles.rentButton}
+        // style ={styles.rentButton}
         onPress={onRent}>
+          <LinearGradient
+                    colors={["#0011FF", "#A46FFF"]}
+                    start={{ x: 1, y: 1 }}
+                    end={{ x: 0, y: 0 }}
+                    style={styles.rentButton}
+                  >
           <Text style = {styles.rental}>Rent</Text>
+          </LinearGradient>
         </TouchableOpacity>
       </View>
     </View>
+    </LinearGradient>
   );
 };
 
@@ -38,15 +53,22 @@ const CarCard: React.FC<CarCardProps> = ({ car,onRent}) => {
 
 // define the styles for te component
 const styles = StyleSheet.create({
+    gradientBorder: {
+      width:'90%',
+        padding: 2, // πάχος του “border”
+        borderRadius: 22,
+        alignItems: "center",
+      justifyContent: "center",
+      marginVertical: 10,
+        marginHorizontal: 15,
+    },
     cardContainer: {
-        borderColor: 'blue',
-        borderWidth: 1.5,
-        width: '90%',
+        width: '100%',
         backgroundColor: 'white',
         borderRadius: 20,
         padding: 20,
-        marginVertical: 10,
-        marginHorizontal: 15,
+        // marginVertical: 10,
+        // marginHorizontal: 15,
         // Shadow for iOS
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -84,7 +106,7 @@ const styles = StyleSheet.create({
     },
     rentButton: {
       marginTop: 40,
-      backgroundColor: 'blue',
+      
       borderRadius: 15,
       paddingHorizontal: 10,
       alignSelf: 'flex-end'
