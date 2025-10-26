@@ -31,7 +31,7 @@ const LocationStack = createNativeStackNavigator();
 
 const CarStackNavigator = ({navigation: parentNavigation }: any) => {
   return (
-    <CarStack.Navigator>
+    <CarStack.Navigator initialRouteName="CarList">
       <CarStack.Screen
         name="CarList"
         component={CarListScreen}
@@ -115,6 +115,11 @@ const CarTabs = () => (
       <Tab.Screen
         name="CarsList"
         component={CarStackNavigator}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            navigation.navigate('CarsList', { screen: 'CarList' });
+             },
+          })}
         options={{
           title: 'Cars',
           tabBarIcon: ({ color, size }) => (

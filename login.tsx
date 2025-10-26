@@ -162,26 +162,27 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   loginButton: {
-    marginTop: 40,
+    marginTop: 30,
     width: 120,
-    height: 60,
+    height: 50,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
   },
   loginButtonText: {
-    fontSize: 24,
+    fontSize: 22,
     color: "white",
     fontWeight: "bold",
   },
   forgotPassword: {
     fontSize: 16,
-    color: "white"
+    color: "white",
+    fontWeight: "bold",
   },
   forgetButton: {
     marginTop: 20,
     width: 160,
-    height: 40,
+    height: 50,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,

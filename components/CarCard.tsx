@@ -59,8 +59,8 @@ const styles = StyleSheet.create({
         borderRadius: 22,
         alignItems: "center",
       justifyContent: "center",
-      marginVertical: 10,
-        marginHorizontal: 15,
+      marginVertical: 12,
+        marginHorizontal: 20,
     },
     cardContainer: {
         width: '100%',

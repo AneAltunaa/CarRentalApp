@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CarDetails from '../components/CarDetails';
 import { Calendar , CalendarProps } from 'react-native-calendars';
 import RentCalendar from '../components/RentCalendar';
@@ -9,6 +9,8 @@ import { Modal, View, StyleSheet, ScrollView, Text, Image, TouchableHighlight, T
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 // for map part
 import MapComponent from '../components/MapComponent';
@@ -23,6 +25,20 @@ const RentCar = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
+  const [bookedDates, setBookedDates] = useState<string[]>([]);
+
+  useEffect(() => {
+  const fetchBookedDates = async () => {
+    try {
+      const response = await fetch(`http://10.0.2.2:5000/booked-dates/${car.id}`);
+      const data = await response.json();
+      setBookedDates(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  fetchBookedDates();
+}, [car.id]);
   const handleConfirmRental = async () => {
   if (!startDate || !endDate) {
     alert("Please select both start and end dates for the rental.");
@@ -45,7 +61,16 @@ const RentCar = () => {
 
     const result = await response.json();
 
-    if (result.success) {
+        if (result.success) {
+      // Προσθήκη των νέων ημερομηνιών στο state
+      const newBooked: string[] = [];
+      const s = new Date(startDate);
+      const e = new Date(endDate);
+      for (let d = new Date(s); d <= e; d.setDate(d.getDate() + 1)) {
+        newBooked.push(d.toISOString().split('T')[0]);
+      }
+      setBookedDates(prev => [...prev, ...newBooked]);
+
       setShowSuccessModal(true);
     } else {
       Alert.alert("Error", result.message);
@@ -55,6 +80,7 @@ const RentCar = () => {
     Alert.alert("Error", "Could not connect to the server.");
   }
 };
+
     
   return (
     <ScrollView>
@@ -70,16 +96,18 @@ const RentCar = () => {
 
             <View style={styles.bottomRow}>
                 <Text style={styles.price}>{car.price} € / day</Text>
-                <TouchableOpacity
-                    onPress={() => setShowDetails(!showDetails)}>
-                    <Text style={styles.details}>
-                        {showDetails ? 'Hide Details' : 'Show Details'}
-                    </Text>
-                    
+                <TouchableOpacity onPress={() => setShowDetails(true)}>
+                  <LinearGradient
+                    colors={["#0011FF", "#A46FFF"]}
+                    start={{ x: 1, y: 1 }}
+                    end={{ x: 0, y: 0 }}
+                    style={styles.detailsButton}
+                  >
+                    <Text style={styles.detailsButtonText}>Show Details</Text>
+                  </LinearGradient>
                 </TouchableOpacity>
                 
             </View>
-            {showDetails && <CarDetails car={car} />}
 
             {/* Add this empty View for spacing */}
             <View style={{ height: 40 }} /> 
@@ -90,6 +118,7 @@ const RentCar = () => {
             </View>
 
             <RentCalendar
+            bookedDates={bookedDates}
             onSelectDates={(start, end) => {
             setStartDate(start);
             setEndDate(end);
@@ -110,6 +139,30 @@ const RentCar = () => {
             </TouchableHighlight>
         </View>
         </LinearGradient>
+        <Modal
+          visible={showDetails}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setShowDetails(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>{car.name} Details</Text>
+              <CarDetails car={car} />
+
+              <TouchableOpacity onPress={() => setShowDetails(false)}>
+                <LinearGradient
+                  colors={["#0011FF", "#A46FFF"]}
+                  start={{ x: 1, y: 1 }}
+                  end={{ x: 0, y: 0 }}
+                  style={styles.closeButton}
+                >
+                  <Text style={styles.closeButtonText}>Close</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
         <Modal 
         visible={showSuccessModal}
         transparent={true}
@@ -123,8 +176,9 @@ const RentCar = () => {
                   onPress={() => 
                   setShowSuccessModal(false)
                   }>
-                    <Ionicons name="car" size={30} color="blue" />
-                  <Text style = {styles.backButton}>x</Text>
+                    <Ionicons style ={{
+                      marginTop:11
+                    }} name="close-circle" size={32} color="#black" />
                 </TouchableOpacity>
                 <Text style = {styles.header}>Rental Confirmed!</Text>
               </View>
@@ -136,14 +190,19 @@ const RentCar = () => {
                   setShowSuccessModal(false);
                   // navegar al carrito, dos niveles
                   const tabNav = navigation.getParent()?.getParent();
-                  if (tabNav) {
-                    (tabNav as any).navigate('CarTabs', {
-                      screen: 'Cart'
-                    });
-                  }
+                  (tabNav as any).reset({
+                    index: 0,
+                    routes: [{ name: 'CarTabs', params: { screen: 'Cart' } }],
+                  });
                 }}>
-
-                <Text style = {styles.rental}>Go to Cart</Text>
+                <LinearGradient
+                                      colors={["#0011FF", "#A46FFF"]}
+                                      start={{ x: 1, y: 1 }}
+                                      end={{ x: 0, y: 0 }}
+                                      style={styles.rentButton}
+                                    >
+                  <Text style = {styles.rental}>Go to Cart</Text>
+                </LinearGradient>
               </TouchableOpacity>
             </View>
           </View>
@@ -154,14 +213,54 @@ const RentCar = () => {
 };
 
 const styles = StyleSheet.create({
+modalOverlay: {
+  flex: 1,
+  backgroundColor: "rgba(0,0,0,0.5)",
+  justifyContent: "center",
+  alignItems: "center",
+},
+modalContainer: {
+  backgroundColor: "white",
+  borderRadius: 20,
+  padding: 20,
+  width: "85%",
+  maxHeight: "80%",
+},
+modalTitle: {
+  fontSize: 18,
+  fontWeight: "bold",
+  color: "black",
+  textAlign: "center",
+  marginBottom: 15,
+},
+closeButton: {
+  marginTop: 15,
+  borderRadius: 20,
+  paddingVertical: 10,
+},
+closeButtonText: {
+  color: "white",
+  textAlign: "center",
+  fontWeight: "600",
+},
+    detailsButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+  },
+  detailsButtonText: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 16,
+  },
   gradientBorder: {
       width:'90%',
         padding: 2, // πάχος του “border”
         borderRadius: 22,
         alignItems: "center",
-      justifyContent: "center",
-      marginVertical: 10,
-        marginHorizontal: 15,
+        justifyContent: "center",
+        marginVertical: 12,
+        marginHorizontal: 20,
   },
     cardContainer: {
         display: 'flex',
@@ -240,8 +339,7 @@ const styles = StyleSheet.create({
       alignItems: 'center'
     },
     modalButton: {
-      marginTop: 40,
-      backgroundColor: 'blue',
+      marginTop: 30,
       borderRadius: 15,
       paddingHorizontal: 10,
       alignSelf: 'flex-end'
@@ -257,8 +355,7 @@ const styles = StyleSheet.create({
     },
     text: {
       fontSize: 18,
-      textAlign: 'center',
-      marginBottom: 10,
+      textAlign: 'center'
     },
     cross: {
       alignSelf: 'flex-start',

@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { LinearGradient } from "expo-linear-gradient";
 
 interface RentalCar {
   rentalId: number;
@@ -168,6 +169,12 @@ const CartScreen = () => {
   };
 
   const renderRentalCard = ({ item }: { item: RentalCar }) => (
+    <LinearGradient
+                        colors={["#0011FF", "#A46FFF"]}
+                        start={{ x: 1, y: 1 }}
+                        end={{ x: 0, y: 0 }}
+                        style = {styles.gradientBorder}
+                      >
     <View style={styles.cardContainer}>
       {/* Header Section */}
       <View style={styles.headerSection}>
@@ -206,14 +213,21 @@ const CartScreen = () => {
             </Text>
           </View>
           <TouchableOpacity 
-            style={styles.payButton}
             onPress={() => handlePayment(item.rentalId)}
           >
+            <LinearGradient
+              colors={["#0011FF", "#A46FFF"]}
+              start={{ x: 1, y: 1 }}
+              end={{ x: 0, y: 0 }}
+              style={styles.payButton}
+            >
             <Text style={styles.payButtonText}>Pay Now</Text>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       </View>
     </View>
+    </LinearGradient>
   );
 
   if (loading) {
@@ -267,12 +281,22 @@ const CartScreen = () => {
         </View>
       )}
     </View>
+   
   );
 };
 
 const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+  gradientBorder: {
+      width:'90%',
+      padding: 2, // πάχος του “border”
+      borderRadius: 22,
+      alignItems: "center",
+      justifyContent: "center",
+      marginVertical: 12,
+      marginHorizontal: 20,
+    },
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
@@ -287,20 +311,19 @@ const styles = StyleSheet.create({
     paddingTop: 10, 
     paddingBottom: 10,
   },
-  cardContainer: {
-    height: height * 0.78,
-    width: width * 0.85,
-    backgroundColor: 'white',
+  payButton: {
+    borderRadius: 15,
+    width: 150,
+    paddingVertical: 12,
     paddingHorizontal: 20,
-    paddingVertical: 25,
-    justifyContent: 'space-between',
+    alignItems: 'center',
     alignSelf: 'center',
-    marginVertical: 20,
-    marginHorizontal: 20,
-    borderColor: 'blue',
-    borderWidth: 1.5,
-    borderLeftColor: 'blue',
+  },
+  cardContainer: {
+    width: '100%',
+    backgroundColor: 'white',
     borderRadius: 20,
+    padding: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -366,16 +389,19 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   paymentSection: {
-    alignItems: 'center',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
     paddingBottom: 15,
     marginTop: 5,
     paddingHorizontal: 15,
   },
   priceContainer: {
+    alignSelf: 'center',
     alignItems: 'center',
     marginBottom: 15,
   },
   totalLine: {
+    alignSelf: 'center',
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 5,
@@ -385,14 +411,6 @@ const styles = StyleSheet.create({
     color: '#888',
     fontStyle: 'italic',
     marginBottom: 15,
-  },
-  payButton: {
-    backgroundColor: 'blue',
-    paddingVertical: 12,
-    paddingHorizontal: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    alignSelf: 'center',
   },
   payButtonText: {
     color: 'white',

@@ -1,6 +1,7 @@
 import sqlite3
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 CORS(app)
@@ -220,7 +221,6 @@ def rent_car():
             "INSERT INTO RentalHistory (startDate, endDate, UserId, CarId) VALUES (?, ?, ?, ?)",
             (start_date, end_date, user_id, car_id)
         )
-        c.execute("UPDATE CarList SET isAvailable = 0 WHERE id = ?", (car_id,))
         conn.commit()
         return jsonify({"success": True, "message": "Rental confirmed"})
     except Exception as e:
@@ -229,6 +229,55 @@ def rent_car():
     finally:
         conn.close()
 
+# Παράδειγμα Flask route για booked dates ενός αυτοκινήτου
+@app.route("/booked-dates/<int:car_id>")
+def booked_dates(car_id):
+    conn = sqlite3.connect("app.db")
+    c = conn.cursor()
+    c.execute("""
+        SELECT startDate, endDate FROM RentalHistory
+        WHERE CarId = ? AND isPaid = 0
+    """, (car_id,))
+    bookings = c.fetchall()
+    conn.close()
+
+    dates = []
+    for start, end in bookings:
+        s = datetime.strptime(start, "%Y-%m-%d")
+        e = datetime.strptime(end, "%Y-%m-%d")
+        while s <= e:
+            dates.append(s.strftime("%Y-%m-%d"))
+            s += timedelta(days=1)
+    return jsonify(dates)
+
+
+
+@app.route("/user/update", methods=["PUT"])
+def update_user():
+    data = request.json
+    user_id = data.get("id")
+    name = data.get("name")
+    surname = data.get("surname")
+    email = data.get("email")
+
+    if not user_id:
+        return jsonify({"success": False, "message": "Missing user ID"}), 400
+
+    try:
+        conn = sqlite3.connect("app.db")
+        c = conn.cursor()
+        c.execute("""
+            UPDATE Users
+            SET name = ?, surname = ?, email = ?
+            WHERE id = ?
+        """, (name, surname, email, user_id))
+        conn.commit()
+        return jsonify({"success": True, "message": "Profile updated"})
+    except Exception as e:
+        print("DB error:", e)
+        return jsonify({"success": False, "message": str(e)}), 500
+    finally:
+        conn.close()
 #get rental history for cart
 @app.route("/rental-history/<int:user_id>", methods=["GET"])
 def get_rental_history(user_id):
@@ -306,6 +355,9 @@ def get_bookings(user_id):
 
     return jsonify(booking_list)
 
+
+@app.route("/reset-availability/<int:rental_id>", methods=["GET"])
+
 #move rental to completed by setting end date to past
 @app.route("/pay-rental/<int:rental_id>", methods=["POST"])
 def pay_rental(rental_id):
@@ -325,13 +377,6 @@ def pay_rental(rental_id):
             SET isPaid = 1
             WHERE id = ?
         """, (rental_id,))
-        
-        # remove from available cars list
-        c.execute("""
-            UPDATE CarList 
-            SET isAvailable = 0 
-            WHERE id = ?
-        """, (rental[3],))
         
         conn.commit()
         return jsonify({"success": True, "message": "Payment processed successfully"})
