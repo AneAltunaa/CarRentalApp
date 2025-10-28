@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
+import { LinearGradient } from "expo-linear-gradient";
 
 interface CompletedRental {
   rentalId: number;
@@ -105,6 +106,12 @@ const Bookings = () => {
   };
 
   const renderBookingCard = ({ item }: { item: CompletedRental }) => (
+    <LinearGradient
+      colors={["#0011FF", "#A46FFF"]}
+      start={{ x: 1, y: 1 }}
+      end={{ x: 0, y: 0 }}
+      style = {styles.gradientBorder}
+    >
     <View style={styles.cardContainer}>
       {/* Header Section */}
       <View style={styles.headerSection}>
@@ -142,6 +149,7 @@ const Bookings = () => {
         </View>
       </View>
     </View>
+    </LinearGradient>
   );
 
   if (loading) {
@@ -191,19 +199,20 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
   },
-  cardContainer: {
-    height: height * 0.5, 
-    width: width * 0.85,
+    gradientBorder: {
+      width:'90%',
+      padding: 2, 
+      borderRadius: 22,
+      alignItems: "center",
+      justifyContent: "center",
+      marginVertical: 12,
+      marginHorizontal: 20,
+    },
+      cardContainer: {
+    width: '100%',
     backgroundColor: 'white',
-    paddingHorizontal: 15,
-    paddingVertical: 15,
-    justifyContent: 'space-between',
-    alignSelf: 'center',
-    marginVertical: 10, 
-    marginHorizontal: 20,
-    borderColor: 'blue',
-    borderWidth: 1.5,
-    borderRadius: 15,
+    borderRadius: 20,
+    padding: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -279,7 +288,7 @@ const styles = StyleSheet.create({
   totalLine: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'blue',
+    color: 'black',
     marginBottom: 3,
   },
   priceBreakdown: {

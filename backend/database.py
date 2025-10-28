@@ -181,7 +181,7 @@ def get_available_cars():
     # once a car is paid for, it stays unavailable
     
     # Get available cars
-    c.execute("SELECT id, name, price, image, engine, power, transmission, model, year FROM CarList WHERE isAvailable = 1")
+    c.execute("SELECT id, name, price, image, engine, power, transmission, model, year, latitude, longitude, locationName FROM CarList WHERE isAvailable = 1")
     cars = c.fetchall()
     conn.close()
 
@@ -196,7 +196,10 @@ def get_available_cars():
             "power": car[5],
             "transmission": car[6],
             "model": car[7],
-            "year": car[8]
+            "year": car[8],
+            "latitude": car[9],
+            "longitude": car[10],
+            "locationName": car[11]
         })
 
 
@@ -256,20 +259,27 @@ def booked_dates(car_id):
 def update_user():
     data = request.json
     user_id = data.get("id")
-    name = data.get("name")
-    surname = data.get("surname")
-    email = data.get("email")
+    name = data.get("name", "").strip()
+    surname = data.get("surname", "").strip()
+    email = data.get("email", "").strip()
 
     if not user_id:
         return jsonify({"success": False, "message": "Missing user ID"}), 400
+    if not name or not surname or not email:
+        return jsonify({"success": False, "message": "Missing fields"}), 400
 
     try:
         conn = sqlite3.connect("app.db")
         c = conn.cursor()
+        # Προαιρετικά: έλεγξε αν υπάρχει ήδη άλλο user με ίδιο email
+        c.execute("SELECT id FROM User WHERE email = ? AND id <> ?", (email, user_id))
+        if c.fetchone():
+            return jsonify({"success": False, "message": "Email already in use"}), 409
+
         c.execute("""
-            UPDATE Users
-            SET name = ?, surname = ?, email = ?
-            WHERE id = ?
+            UPDATE User
+               SET name = ?, surname = ?, email = ?
+             WHERE id = ?
         """, (name, surname, email, user_id))
         conn.commit()
         return jsonify({"success": True, "message": "Profile updated"})
@@ -278,6 +288,7 @@ def update_user():
         return jsonify({"success": False, "message": str(e)}), 500
     finally:
         conn.close()
+
 #get rental history for cart
 @app.route("/rental-history/<int:user_id>", methods=["GET"])
 def get_rental_history(user_id):
@@ -398,6 +409,16 @@ def init_db_columns():
         
         if not has_ispaid:
             c.execute("ALTER TABLE RentalHistory ADD COLUMN isPaid INTEGER DEFAULT 0")
+        c.execute("PRAGMA table_info(CarList)")
+        car_cols = c.fetchall()
+        names = {col[1] for col in car_cols}
+
+        if 'latitude' not in names:
+            c.execute("ALTER TABLE CarList ADD COLUMN latitude REAL")
+        if 'longitude' not in names:
+            c.execute("ALTER TABLE CarList ADD COLUMN longitude REAL")
+        if 'locationName' not in names:
+            c.execute("ALTER TABLE CarList ADD COLUMN locationName TEXT")
             conn.commit()
             
     except Exception as e:

@@ -290,7 +290,7 @@ const { width, height } = Dimensions.get('window');
 const styles = StyleSheet.create({
   gradientBorder: {
       width:'90%',
-      padding: 2, // πάχος του “border”
+      padding: 2,
       borderRadius: 22,
       alignItems: "center",
       justifyContent: "center",

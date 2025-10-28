@@ -11,6 +11,9 @@ export interface Car {
   year: number;
   power: string;
   transmission: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  locationName?: string | null;
 }
 
 //fetch from backend
@@ -29,6 +32,9 @@ export const getCars = async (): Promise<Car[]> => {
       year: car.year,
       power: car.power,
       transmission: car.transmission,
+      latitude: car.latitude ?? null,
+      longitude: car.longitude ?? null,
+      locationName: car.locationName ?? null,
     }));
 
     return cars;

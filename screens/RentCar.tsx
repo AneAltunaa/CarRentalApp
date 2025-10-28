@@ -92,7 +92,10 @@ const RentCar = () => {
                         >
         <View style={styles.cardContainer}>
             <Text style={styles.title}>{car.name}</Text>
-            <Image source={{ uri: car.image }} style={{ width: 300, height: 200 }} />
+            <View style={styles.imageWrap}>
+              <Image source={{ uri: car.image }} style={styles.carImage} />
+            </View>
+
 
             <View style={styles.bottomRow}>
                 <Text style={styles.price}>{car.price} € / day</Text>
@@ -114,7 +117,7 @@ const RentCar = () => {
 
             {/* Map section */}
             <View style={styles.mapContainer}>
-              <MapComponent />
+              <MapComponent cars={[car]} height={200} />
             </View>
 
             <RentCalendar
@@ -124,19 +127,16 @@ const RentCar = () => {
             setEndDate(end);
           }} />
 
-            <TouchableHighlight 
-                onPress={handleConfirmRental}>
-                  <LinearGradient
-                                      colors={["#0011FF", "#A46FFF"]}
-                                      start={{ x: 1, y: 1 }}
-                                      end={{ x: 0, y: 0 }}
-                                      style={styles.rentButton}
-                                    >
-                <Text style={styles.rental}>
-                    Confirm Rental
-                </Text>
-                </LinearGradient>
-            </TouchableHighlight>
+            <TouchableOpacity onPress={handleConfirmRental} activeOpacity={0.7}>
+              <LinearGradient
+                colors={["#0011FF", "#A46FFF"]}
+                start={{ x: 1, y: 1 }}
+                end={{ x: 0, y: 0 }}
+                style={styles.rentButton}
+              >
+                <Text style={styles.rental}>Confirm Rental</Text>
+              </LinearGradient>
+            </TouchableOpacity>
         </View>
         </LinearGradient>
         <Modal
@@ -213,6 +213,21 @@ const RentCar = () => {
 };
 
 const styles = StyleSheet.create({
+  imageWrap: {
+  width: '100%',
+  aspectRatio: 16 / 9,      // κράτα 16:9 πλαίσιο (μπορείς να το αλλάξεις)
+  borderRadius: 12,
+  backgroundColor: 'white',
+  overflow: 'hidden',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginBottom: 10,
+},
+carImage: {
+  width: '100%',
+  height: '100%',
+  resizeMode: 'contain',    // ΔΕΝ κόβει την εικόνα
+},
 modalOverlay: {
   flex: 1,
   backgroundColor: "rgba(0,0,0,0.5)",
@@ -255,7 +270,7 @@ closeButtonText: {
   },
   gradientBorder: {
       width:'90%',
-        padding: 2, // πάχος του “border”
+        padding: 2, 
         borderRadius: 22,
         alignItems: "center",
         justifyContent: "center",
@@ -324,7 +339,7 @@ closeButtonText: {
     },
     modal: {
       flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.5)', // διάφανο μαύρο φόντο
+      backgroundColor: 'rgba(0,0,0,0.5)',
       justifyContent: 'center',
       alignItems: 'center',
     },
