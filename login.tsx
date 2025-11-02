@@ -85,7 +85,7 @@ export default function LoginScreen() {
               />
             </View>
           </LinearGradient>
-            <TouchableOpacity onPress={() => navigation.navigate('ForgotPass')} activeOpacity={0.8} />
+            <TouchableOpacity onPress={() => navigation.navigate('ForgotPass')} activeOpacity={0.8} >
               <LinearGradient
               colors={["#0011FF", "#A46FFF"]}
               start={{ x: 0, y: 0 }}
@@ -94,6 +94,9 @@ export default function LoginScreen() {
             >
               <Text style={styles.forgotPassword}>Forgot Password</Text>   
             </LinearGradient>
+            </TouchableOpacity>
+
+            
 
           
 
